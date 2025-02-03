@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status
 from .models import MyUser
 from .models import Note
-from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer
+from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -124,9 +124,48 @@ def get_user_profile_data(request, pk):
     except MyUser.DoesNotExist:
         return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
     
+    serializer = MyUserProfileSerializer(user, many=False)
+
+    following = False
+
+    if request.user in user.follower.all():
+        following = True
+    
     try:
         serializer = MyUserProfileSerializer(user, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({**serializer.data, 'is_our_profile': request.user.username == user.username, 'following':following}, status=status.HTTP_200_OK)
     except Exception as e:
         # Optionally, log the error for debugging purposes
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggleFollow(request):
+    try:
+        try:
+            my_user = MyUser.objects.get(username=request.user.username)
+            user_to_follow = MyUser.objects.get(username=request.data['username'])
+        except:
+            return Response({'error':'user does not exist'})
+        if my_user in user_to_follow.follower.all():
+            user_to_follow.follower.remove(my_user)
+            return Response({'now_following':False})
+        else:
+            user_to_follow.follower.add(my_user)
+            return Response({'now_following':True})
+    except:
+        return Response({'error':'error in following user'})
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_users_posts(request, pk):
+    try:
+        user = MyUser.objects.get(username=pk)
+    except MyUser.DoesNotExist:
+        return Response({"error":"user does not exist"})
+    
+    posts = user.posts.all().order_by('-created_at')
+
+    serializer = PostSerializer(posts, many=True)
+
+    return Response(serializer.data)

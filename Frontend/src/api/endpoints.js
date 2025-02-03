@@ -7,6 +7,7 @@ const NOTES_URL = `${BASE_URL}notes/`
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`
 const REGISTER_URL = `${BASE_URL}register/`
 const LOGOUT_URL = `${BASE_URL}logout/`
+const TOOGLE_FOLLOW = `${BASE_URL}toggle_follow/`
 const GET_CHAT_URL = `${BASE_URL}chatrooms/public-chat/messages/`
 
 
@@ -95,6 +96,19 @@ export const get_user_profile_info = async (username) => {
     }
 };
 
+export const get_users_posts = async (username) => {
+    try{
+        const response = await api.get(`posts/${username}/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`user_data/${username}/`, { withCredentials: true }));
+    }
+};
+
+export const toggleFollow = async (username) => {
+    const response = await axios.post(TOOGLE_FOLLOW,{username:username}, { withCredentials: true });
+    return response.data;
+};
 
 // chat endpoints
 
@@ -106,3 +120,4 @@ export const get_messages = async () => {
         return call_refresh(error, axios.get(GET_CHAT_URL, { withCredentials: true }))
     }
 };
+
