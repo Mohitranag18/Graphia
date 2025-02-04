@@ -11,6 +11,7 @@ import PrivateRoute from './components/private_route.jsx';
 import ChatRoom from './components/chat.jsx';
 import UserProfile from './routes/userProfile.jsx';
 import Home from './routes/home.jsx';
+import CreatePost from './routes/create_post.jsx';
 
 function App() {
   return (
@@ -38,6 +39,13 @@ function App() {
               </PrivateRoute>
             }
             path="/"
+          />
+          <Route element={
+              <PrivateRoute>
+                <CreatePost />
+              </PrivateRoute>
+            }
+            path="/create/post"
           />
           <Route element={<Login />} path="/login" />
           <Route element={<Register />} path="/register" />

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_users_posts
+from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_users_posts, toggleLike, create_post
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -15,4 +15,6 @@ urlpatterns = [
     path('user_data/<str:pk>/', get_user_profile_data, name='get_user_profile_data'),  # GET method for fetching user data
     path('toggle_follow/', toggleFollow),
     path('posts/<str:pk>/', get_users_posts),
+    path('toggleLike/', toggleLike),
+    path('create_post/', create_post),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

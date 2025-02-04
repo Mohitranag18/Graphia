@@ -14,6 +14,7 @@ function Header() {
             <div>Logo</div>
             <div className="flex gap-4">
                 <p onClick={(route) => handleNavigate('')}>Home</p>
+                <p onClick={(route) => handleNavigate('create/post')}>Create</p>
                 <p onClick={(route) => handleNavigate('chat')}>Chat</p>
                 <p onClick={(route) => handleNavigate('user/admin')}>Profile</p>
             </div>

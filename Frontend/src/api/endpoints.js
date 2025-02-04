@@ -110,6 +110,16 @@ export const toggleFollow = async (username) => {
     return response.data;
 };
 
+export const toggleLike = async (id) => {
+    const response = await api.post('toggleLike/',{id:id}, { withCredentials: true });
+    return response.data;
+};
+
+export const create_post = async (description) => {
+    const response = await api.post('create_post/',{ description }, { withCredentials: true });
+    return response.data;
+};
+
 // chat endpoints
 
 export const get_messages = async () => {
