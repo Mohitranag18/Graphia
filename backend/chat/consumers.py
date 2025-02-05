@@ -29,12 +29,23 @@ class ChatroomConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_add)(
             self.chatroom_name, self.channel_name
         )
+        #add and update online users
+        if self.user not in self.chatroom.users_online.all():
+            self.chatroom.users_online.add(self.user)
+            self.update_online_count()
+
         self.accept()
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
             self.chatroom_name, self.channel_name
         )
+
+        # remove and update online users
+        if self.user in self.chatroom.users_online.all():
+            self.chatroom.users_online.remove(self.user)
+            self.update_online_count()
+
 
     def receive(self, text_data):
         print("Received message:", text_data)  # Debugging line
@@ -93,3 +104,21 @@ class ChatroomConsumer(WebsocketConsumer):
         except Exception as e:
             print(f"Unexpected error: {e}")
         return False
+    
+    def update_online_count(self):
+        online_count = self.chatroom.users_online.count()
+
+        event = {
+            'type': 'online_count_handler',
+            'online_count': online_count
+        }
+        async_to_sync(self.channel_layer.group_send)(self.chatroom_name, event)
+
+    def online_count_handler(self, event):
+        online_count = event['online_count']
+        
+        # Send online count as JSON instead of HTML
+        self.send(text_data=json.dumps({
+            'type': 'online_users_count',
+            'count': online_count
+        }))

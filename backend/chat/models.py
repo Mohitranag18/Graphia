@@ -3,6 +3,7 @@ from django.conf import settings
 
 class ChatGroup(models.Model):
     group_name = models.CharField(max_length=128, unique=True)
+    users_online = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='online_in_group', blank=True)
 
     def __str__(self):
         return self.group_name

@@ -66,7 +66,6 @@ function App() {
           <Route element={<Login />} path="/login" />
           <Route element={<Register />} path="/register" />
         </Routes>
-        <Footer />
       </AuthProvider>
     </Router>
   );

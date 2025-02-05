@@ -1,10 +1,9 @@
-// ChatUI.js
 import useWebSocket from './useWebSocket';  // Import the WebSocket module
 import { useEffect, useState, useRef } from "react";
 import { get_messages } from "../api/endpoints";
 
 const ChatRoom = () => {
-  const { messages, sendMessage } = useWebSocket();
+  const { messages, sendMessage, onlineUsersCount } = useWebSocket();
   const [newMessage, setNewMessage] = useState('');
   const [username, setUsername] = useState('User1'); // Example username
   const [oldMessages, setOldMessages] = useState([]);
@@ -20,6 +19,7 @@ const ChatRoom = () => {
 
   // Scroll to the bottom of the messages container
   useEffect(() => {
+    // Only scroll to the bottom of the inner messages container
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, oldMessages]);
 
@@ -29,9 +29,10 @@ const ChatRoom = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="flex flex-col items-center max-w-2xl mx-auto mt-10 space-y-4 p-6 border border-gray-300 rounded-lg bg-white shadow-lg">
+    <div>
+      <div className="flex flex-col items-center max-w-2xl mx-auto m-4 space-y-4 p-6 py-4 border border-gray-300 rounded-lg bg-white shadow-lg">
         {/* Messages Container */}
+        <p className='w-full mx-auto text-sm mb-4'>Online Users: {onlineUsersCount}</p>
         <div className="w-full h-96 overflow-y-auto space-y-2 p-2 bg-gray-50 rounded-lg shadow-inner hide-scrollbar">
           {/* Old Messages */}
           {oldMessages.map((message) => (

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 
 const useWebSocket = () => {
   const [messages, setMessages] = useState([]);
+  const [onlineUsersCount, setOnlineUsersCount] = useState(0);
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
@@ -23,14 +24,22 @@ const useWebSocket = () => {
       const data = JSON.parse(event.data);
       console.log('Received message:', data); // Debugging line
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          message: data.message,
-          author: data.author,
-          timestamp: data.timestamp,
-        }
-      ]);
+      // Handle the online_users_count message
+      if (data.type === 'online_users_count') {
+        setOnlineUsersCount(data.count);  // Update the online users count
+      }
+
+      // Handle normal message events
+      if (data.message && data.message.trim() !== '') {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            message: data.message,
+            author: data.author,
+            timestamp: data.timestamp,
+          }
+        ]);
+      }
     };
 
     ws.onclose = (event) => {
@@ -55,7 +64,7 @@ const useWebSocket = () => {
     }
   };
 
-  return { messages, sendMessage };
+  return { messages, sendMessage, onlineUsersCount };
 };
 
 export default useWebSocket;
