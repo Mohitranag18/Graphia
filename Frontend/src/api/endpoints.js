@@ -24,7 +24,7 @@ export const login = async (username, password) => {
         );
         
         // Check if the response contains a success attribute (depends on backend response structure)
-        return response.data.success
+        return response.data
     } catch (error) {
         console.error("Login failed:", error);
         return false;  // Return false or handle the error as needed
@@ -128,6 +128,11 @@ export const get_posts = async (num) =>{
 
 export const search_users = async (search) =>{
     const response = await api.get(`search/?query=${search}`)
+    return response.data
+}
+
+export const update_user = async (values) =>{
+    const response = await api.patch('update_user/', values, { headers:{'Content-Type': 'multipart/form-data'}})
     return response.data
 }
 

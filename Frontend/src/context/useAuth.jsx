@@ -22,10 +22,17 @@ export const AuthProvider = ({ children }) => {
 
   const loginUser = async (username, password) => {
     const user = await login(username, password);
-    if (user) {
+    if (user.success) {
       setUser(user);
       nav('/');
-      localStorage.setItem('userData', JSON.stringify({'username':username}))
+      const userData = {
+        "username":user.user.username,
+        "bio":user.user.bio,
+        "email":user.user.email,
+        "first_name":user.user.first_name,
+        "last_name":user.user.last_name,
+      }
+      localStorage.setItem('userData', JSON.stringify(userData))
     } else {
       alert('Incorrect username or password');
     }

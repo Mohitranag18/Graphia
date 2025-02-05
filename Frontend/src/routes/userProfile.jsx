@@ -2,9 +2,16 @@ import { useState, useEffect } from "react";
 import { get_user_profile_info, toggleFollow } from "../api/endpoints";
 import UserPosts from "../components/userPosts";
 import {SERVER_URL} from '../api/endpoints'
+import { useNavigate } from "react-router-dom";
 import BlankImage from '../assets/blank_profile_picture2.png'
 
 function UserProfile() {
+    const nav = useNavigate();
+
+    const handleNavigate = (route) => {
+        nav(`/${route}`)
+    }
+
     const [loading, setLoading] = useState(true)
     const [bio, setBio] = useState('')
     const [profileImage, setProfileImage] = useState('')
@@ -25,7 +32,6 @@ function UserProfile() {
         const fetchData = async () => {
             try {
                 const data = await get_user_profile_info(username);
-                console.log(data);
                 setBio(data?.bio || "No bio available");
                 setProfileImage(data.profile_image)
                 setFollowersCount(data.follower_count)
@@ -83,7 +89,7 @@ function UserProfile() {
                         <div className="flex justify-center w-full">
                             {
                                 isOurProfile ?
-                                <button className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Edit</button>
+                                <button onClick={(route) => handleNavigate('edit/profile')} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Edit</button>
                                 :
                                 <button onClick={handleToggleFollow} className="bg-blue-500 p-2 py-1 w-full text-lg text-white rounded-lg">{ following ? "Unfollow" : "Follow"}</button>
                             }
