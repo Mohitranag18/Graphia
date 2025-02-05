@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_users_posts, toggleLike, create_post, get_posts
+from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_users_posts, toggleLike, create_post, get_posts, search_user
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -18,4 +18,5 @@ urlpatterns = [
     path('toggleLike/', toggleLike),
     path('create_post/', create_post),
     path('get_posts/', get_posts),
+    path('search/', search_user),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { get_user_profile_info, toggleFollow } from "../api/endpoints";
 import UserPosts from "../components/userPosts";
+import {SERVER_URL} from '../api/endpoints'
+import BlankImage from '../assets/blank_profile_picture2.png'
 
 function UserProfile() {
     const [loading, setLoading] = useState(true)
@@ -52,14 +54,20 @@ function UserProfile() {
     }
 
     return (
-        <div className="min-h-screen p-8">
-            <div className="flex flex-col gap-4">
-                <div className="flex justify-center">
-                    <p className="text-2xl font-semibold">{ loading ? '' : `@${username}`}</p>
+        <div className="min-h-screen p-8 w-screen flex flex-col items-center">
+            <div className="flex flex-col gap-6 w-[80%]">
+                <div>
+                    <p className="text-4xl font-semibold">{ loading ? '' : `@${username}`}</p>
                 </div>
                 <div className="flex gap-8">
-                    <div className="rounded-full border-2 border-black w-48 h-48 overflow-hidden">
-                        <img src={loading ? '' : `http://127.0.0.1:8000/api${profileImage}`} alt="Profile Pic" className="object-cover w-full h-full" />
+                    <div className="rounded-full border-2 border-black w-38 h-38 overflow-hidden">
+                        {
+                            profileImage ?
+                            <img src={loading ? '' : `${SERVER_URL}${profileImage}`} alt="Profile Pic" className="object-cover w-full h-full" />
+                            :
+                            <img src={BlankImage} alt="Profile Pic" className="object-cover w-full h-full" />
+                        }
+                        
                     </div>
                     <div className="flex flex-col justify-around">
                         <div className="flex gap-8">
@@ -72,19 +80,19 @@ function UserProfile() {
                                 <p>{loading ? '_' : followingsCount}</p>
                             </div>
                         </div>
-                        <div className="flex justify-center">
+                        <div className="flex justify-center w-full">
                             {
                                 isOurProfile ?
-                                <button className="bg-gray-400 p-2 text-black rounded-lg">Edit</button>
+                                <button className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Edit</button>
                                 :
-                                <button onClick={handleToggleFollow} className="bg-blue-500 p-2 text-white rounded-lg">{ following ? "Unfollow" : "Follow"}</button>
+                                <button onClick={handleToggleFollow} className="bg-blue-500 p-2 py-1 w-full text-lg text-white rounded-lg">{ following ? "Unfollow" : "Follow"}</button>
                             }
                         </div>
                     </div>
                 </div>
                 <div><p>{loading ? '' : bio}</p></div>
             </div>
-            <div className="mt-8 p-4">
+            <div className="mt-8 p-4 w-[80%]">
                 <UserPosts username={username}/>
             </div>
         </div>

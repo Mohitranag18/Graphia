@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status
 from .models import MyUser
 from .models import Note, Post
-from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer
+from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer, UserSerializer
 
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
@@ -256,3 +256,11 @@ def get_posts(request):
         data.append(new_post)
 
     return paginator.get_paginated_response(data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def search_user(request):
+    query = request.query_params.get('query', '')
+    users = MyUser.objects.filter(username__icontains=query)
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)

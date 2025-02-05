@@ -12,6 +12,7 @@ import ChatRoom from './components/chat.jsx';
 import UserProfile from './routes/userProfile.jsx';
 import Home from './routes/home.jsx';
 import CreatePost from './routes/create_post.jsx';
+import Search from './routes/search.jsx';
 
 function App() {
   return (
@@ -46,6 +47,13 @@ function App() {
               </PrivateRoute>
             }
             path="/create/post"
+          />
+          <Route element={
+              <PrivateRoute>
+                <Search />
+              </PrivateRoute>
+            }
+            path="/search"
           />
           <Route element={<Login />} path="/login" />
           <Route element={<Register />} path="/register" />

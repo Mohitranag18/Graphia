@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://127.0.0.1:8000/api/'
+export const SERVER_URL = 'http://127.0.0.1:8000/api'
 const LOGIN_URL = `${BASE_URL}token/`
 const REFRESH_URL = `${BASE_URL}token/refresh/`
 const NOTES_URL = `${BASE_URL}notes/`
@@ -122,6 +123,11 @@ export const create_post = async (description) => {
 
 export const get_posts = async (num) =>{
     const response = await api.get(`get_posts/?page=${num}`)
+    return response.data
+}
+
+export const search_users = async (search) =>{
+    const response = await api.get(`search/?query=${search}`)
     return response.data
 }
 

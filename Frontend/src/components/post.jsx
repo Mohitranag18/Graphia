@@ -23,7 +23,7 @@ function Post({id, username, description, formatted_date, liked, like_count}) {
 
     return ( 
         <>
-        <div className="w-64">
+        <div className="w-74">
             <div className="w-full py-2 px-4 bg-gray-200 border-2 border-gray-300 rounded-t-2xl">
                 <p className="text-lg font-semibold">{`@${username}`}</p>
             </div>

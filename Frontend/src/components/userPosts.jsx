@@ -22,7 +22,7 @@ function UserPosts({username}) {
 
     return ( 
         <>
-        <div className="flex flex-wrap gap-8">
+        <div className="flex flex-wrap justify-center gap-10">
             {loading ?
                 <p>Loading....</p>
             :
