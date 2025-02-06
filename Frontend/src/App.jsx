@@ -9,6 +9,7 @@ import Register from './routes/register';
 import PrivateRoute from './components/private_route.jsx';
 
 import ChatRoom from './components/chat.jsx';
+import ChatRoomPrivate from './components/chatPrivate.jsx';
 import UserProfile from './routes/userProfile.jsx';
 import Home from './routes/home.jsx';
 import CreatePost from './routes/create_post.jsx';
@@ -26,7 +27,14 @@ function App() {
                 <ChatRoom />
               </PrivateRoute>
             }
-            path="/chat"
+            path="/chat/:roomname"
+          />
+          <Route element={
+              <PrivateRoute>
+                <ChatRoomPrivate />
+              </PrivateRoute>
+            }
+            path="/chatPrivate/:username"
           />
           <Route element={
               <PrivateRoute>

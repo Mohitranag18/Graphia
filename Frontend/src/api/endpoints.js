@@ -9,7 +9,7 @@ const AUTHENTICATED_URL = `${BASE_URL}authenticated/`
 const REGISTER_URL = `${BASE_URL}register/`
 const LOGOUT_URL = `${BASE_URL}logout/`
 const TOOGLE_FOLLOW = `${BASE_URL}toggle_follow/`
-const GET_CHAT_URL = `${BASE_URL}chatrooms/public-chat/messages/`
+
 
 
 
@@ -137,13 +137,31 @@ export const update_user = async (values) =>{
 }
 
 // chat endpoints
+// const GET_CHAT_URL = `${BASE_URL}chatrooms/public-chat/messages/`
 
-export const get_messages = async () => {
+// export const get_messages = async () => {
+//     try{
+//         const response = await axios.get(GET_CHAT_URL, { withCredentials: true });
+//         return response.data;
+//     }catch(error){
+//         return call_refresh(error, axios.get(GET_CHAT_URL, { withCredentials: true }))
+//     }
+// };
+
+export const get_messages = async (group_name) => {
     try{
-        const response = await axios.get(GET_CHAT_URL, { withCredentials: true });
+        const response = await api.get(`chatrooms/${group_name}/messages/`, { withCredentials: true });
         return response.data;
     }catch(error){
-        return call_refresh(error, axios.get(GET_CHAT_URL, { withCredentials: true }))
+        return call_refresh(error, () => api.get(`${group_name}/messages/`, { withCredentials: true }));
     }
 };
 
+export const get_private_messages = async (group_name) => {
+    try{
+        const response = await api.get(`chatrooms/${group_name}/private_messages/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`${group_name}/private_messages/`, { withCredentials: true }));
+    }
+};

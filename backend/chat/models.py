@@ -19,3 +19,33 @@ class GroupMessage(models.Model):
     
     class Meta:
         ordering = ['-created']
+
+
+class PrivateChat(models.Model):
+    user1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='chat_user1')
+    user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='chat_user2')
+    group_name = models.CharField(max_length=128, unique=True, blank=True)  # Keep the field blank initially
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # Set group_name dynamically based on user1 and user2 usernames
+        if not self.group_name:  # Set it only if group_name is not provided
+            self.group_name = f"{self.user1.username}_{self.user2.username}"
+
+        super(PrivateChat, self).save(*args, **kwargs)  # Call the original save method
+
+    def __str__(self):
+        return self.group_name  # Return group_name as the string representation
+
+
+class PrivateMessage(models.Model):
+    chat = models.ForeignKey(PrivateChat, related_name='private_messages', on_delete=models.CASCADE)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.body}"
+
+    class Meta:
+        ordering = ['-created']

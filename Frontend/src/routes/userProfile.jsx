@@ -91,7 +91,10 @@ function UserProfile() {
                                 isOurProfile ?
                                 <button onClick={(route) => handleNavigate('edit/profile')} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Edit</button>
                                 :
+                                <div>
                                 <button onClick={handleToggleFollow} className="bg-blue-500 p-2 py-1 w-full text-lg text-white rounded-lg">{ following ? "Unfollow" : "Follow"}</button>
+                                <button onClick={(route) => handleNavigate(`chatPrivate/${username}`)} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Message</button>
+                                </div>
                             }
                         </div>
                     </div>
