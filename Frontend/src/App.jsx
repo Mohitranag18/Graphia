@@ -8,7 +8,7 @@ import Register from './routes/register';
 
 import PrivateRoute from './components/private_route.jsx';
 
-import ChatRoom from './components/chat.jsx';
+import ChatRoom from './components/chatgroup.jsx';
 import ChatRoomPrivate from './components/chatPrivate.jsx';
 import UserProfile from './routes/userProfile.jsx';
 import Home from './routes/home.jsx';
@@ -16,6 +16,7 @@ import CreatePost from './routes/create_post.jsx';
 import Search from './routes/search.jsx';
 import EditProfile from './routes/editProfile.jsx';
 import Groups from './routes/groups.jsx';
+import GroupInfo from './components/group_info.jsx';
 
 function App() {
   return (
@@ -23,12 +24,19 @@ function App() {
       <AuthProvider>
         <Header />
         <Routes>
+        <Route element={
+              <PrivateRoute>
+                <GroupInfo />
+              </PrivateRoute>
+            }
+            path="/chatroom/:roomname/info"
+          />
           <Route element={
               <PrivateRoute>
                 <ChatRoom />
               </PrivateRoute>
             }
-            path="/chat/:roomname"
+            path="/chatroom/:roomname"
           />
           <Route element={
               <PrivateRoute>
@@ -42,7 +50,7 @@ function App() {
                 <ChatRoomPrivate />
               </PrivateRoute>
             }
-            path="/chatPrivate/:username"
+            path="/chat/:username"
           />
           <Route element={
               <PrivateRoute>

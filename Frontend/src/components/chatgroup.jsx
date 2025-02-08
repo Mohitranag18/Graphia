@@ -1,9 +1,25 @@
 import useWebSocket from './useWebSocket';  // Import the WebSocket module
 import { useEffect, useState, useRef } from "react";
 import { get_group_messages } from "../api/endpoints";
+import { useNavigate } from "react-router-dom";
 
 const ChatRoom = () => {
-  const { messages, sendMessage, onlineUsersCount } = useWebSocket('public-chat');
+
+  const nav = useNavigate();
+
+  const handleNavigate = (route) => {
+      nav(`${route}`)
+  }
+
+  const getGroupNameFromUrl = () => {
+    const urlSplit = window.location.pathname.split('/');
+    return urlSplit[urlSplit.length - 1];
+  };
+
+  const [groupName, setGroupName] = useState(getGroupNameFromUrl());
+  
+
+  const { messages, sendMessage, onlineUsersCount } = useWebSocket(groupName);
   const [newMessage, setNewMessage] = useState('');
   const [oldMessages, setOldMessages] = useState([]);
   const messagesEndRef = useRef(null); // Ref to scroll to bottom
@@ -13,11 +29,11 @@ const ChatRoom = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const oldMessages = await get_group_messages('public-chat');
+      const oldMessages = await get_group_messages(groupName);
       setOldMessages(oldMessages);
     };
     fetchMessages();
-  }, []);
+  }, [groupName]);
 
   // Scroll to the bottom of the messages container
   useEffect(() => {
@@ -34,7 +50,10 @@ const ChatRoom = () => {
     <div>
       <div className="flex flex-col items-center max-w-2xl mx-auto m-4 space-y-4 p-6 py-4 border border-gray-300 rounded-lg bg-white shadow-lg">
         {/* Messages Container */}
-        <p className='w-full mx-auto text-sm mb-4'>Online Users: {onlineUsersCount}</p>
+        <div className='flex justify-between w-full'>
+          <p className='text-sm mb-4'>Online Users: {onlineUsersCount}</p>
+          <p onClick={(route) => handleNavigate(`/chatroom/${groupName}/info`)} className='text-md font-bold text-blue-500 hover:underline cursor-pointer'>{groupName}</p>
+        </div>
         <div className="w-full h-96 overflow-y-auto space-y-2 p-2 bg-gray-50 rounded-lg shadow-inner hide-scrollbar">
           {/* Old Messages */}
           {oldMessages.map((message) => (

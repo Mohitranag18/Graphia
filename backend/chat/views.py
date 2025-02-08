@@ -9,10 +9,10 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def fetch_messages(request, group_name):
+def fetch_messages(request, slug):
     try:
         # Fetch the chat group
-        chat_group = get_object_or_404(ChatGroup, group_name=group_name)
+        chat_group = get_object_or_404(ChatGroup, slug=slug)
         
         # Get the last 30 messages (reverse order for latest)
         messages = chat_group.chat_messages.all().order_by('created')[:30]
@@ -88,12 +88,12 @@ def leave_group(request, group_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_groups(request):
-    groups = ChatGroup.objects.values('id', 'group_name', 'description', 'created_at')
+    groups = ChatGroup.objects.values('id', 'group_name', 'slug', 'description', 'created_at')
     return JsonResponse(list(groups), safe=False)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_group_details(request, group_id):
-    group = get_object_or_404(ChatGroup, pk=group_id)
+def get_group_details(request, slug):
+    group = get_object_or_404(ChatGroup, slug=slug)
     serializer = ChatGroupSerializer(group)
     return Response(serializer.data)

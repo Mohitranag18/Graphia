@@ -32,7 +32,7 @@ function Header() {
                 <p onClick={(route) => handleNavigate('')}><AiOutlineHome /></p>
                 <p onClick={(route) => handleNavigate('search')} className="text-2xl"><IoMdSearch /></p>
                 <p onClick={(route) => handleNavigate('create/post')}><IoMdAddCircleOutline /></p>
-                <p onClick={(route) => handleNavigate('chat')}><IoChatbubbleEllipsesOutline /></p>
+                <p onClick={(route) => handleNavigate('groups')}><IoChatbubbleEllipsesOutline /></p>
                 <p onClick={handleNavigateUser}><CgProfile /></p>
             </div>
         </div>

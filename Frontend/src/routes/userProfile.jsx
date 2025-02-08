@@ -86,20 +86,20 @@ function UserProfile() {
                                 <p>{loading ? '_' : followingsCount}</p>
                             </div>
                         </div>
-                        <div className="flex justify-center w-full">
+                        <div className="flex justify-center w-full mt-4">
                             {
                                 isOurProfile ?
                                 <button onClick={(route) => handleNavigate('edit/profile')} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Edit</button>
                                 :
-                                <div>
+                                <div className="flex flex-col gap-2 w-full">
                                 <button onClick={handleToggleFollow} className="bg-blue-500 p-2 py-1 w-full text-lg text-white rounded-lg">{ following ? "Unfollow" : "Follow"}</button>
-                                <button onClick={(route) => handleNavigate(`chatPrivate/${username}`)} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Message</button>
+                                <button onClick={(route) => handleNavigate(`chat/${username}`)} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Message</button>
                                 </div>
                             }
                         </div>
                     </div>
                 </div>
-                <div><p>{loading ? '' : bio}</p></div>
+                <div><p className="text-lg">{loading ? '' : bio}</p></div>
             </div>
             <div className="mt-8 p-4 w-[80%]">
                 <UserPosts username={username}/>

@@ -27,8 +27,8 @@ function CreateGroup() {
       <h2 className='text-2xl font-bold'>Create a New Group</h2>
       <form className='w-86 flex flex-col gap-4' onSubmit={handleCreateGroup}>
         <div className='flex flex-col gap-2'>
-          <label>Group Name:</label>
-          <input className='bg-gray-200 rounded-sm p-2'
+          <label className="text-lg font-semibold">Group Name:</label>
+          <input className='bg-gray-300 rounded-sm p-2'
             type="text"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
@@ -36,8 +36,8 @@ function CreateGroup() {
           />
         </div>
         <div className='flex flex-col gap-2'>
-          <label>Description:</label>
-          <textarea className='bg-gray-200 rounded-sm p-2'
+          <label className="text-lg font-semibold">Description:</label>
+          <textarea className='bg-gray-300 rounded-sm p-2'
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />

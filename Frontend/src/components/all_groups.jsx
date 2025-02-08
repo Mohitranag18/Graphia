@@ -24,6 +24,7 @@ function AllGroups() {
 
     return ( 
         <>
+        <div className='h-112'>
         <div className='flex flex-col gap-4'>
         <h2 className="text-2xl font-bold">Groups List</h2>
         <div className='flex flex-col gap-4'>
@@ -32,9 +33,10 @@ function AllGroups() {
                 <p>Loading....</p>
                 :
                 allGroups.map((group)=>{
-                    return <GroupCard id={group.id} group_name={group.group_name} description={group.description} />
+                    return <GroupCard id={group.id} group_name={group.group_name} slug={group.slug} description={group.description} />
                 })
             }
+        </div>
         </div>
         </div>
         </>

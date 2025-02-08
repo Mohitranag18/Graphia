@@ -172,3 +172,30 @@ export const get_all_groups = async () => {
         return call_refresh(error, () => api.get(`groups_list/`, { withCredentials: true }));
     }
 };
+
+export const get_group_details = async (slug) => {
+    try{
+        const response = await api.get(`groups_details/${slug}`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`groups_details/${slug}`, { withCredentials: true }));
+    }
+};
+
+export const join_group = async (group_id) => {
+    try{
+        const response = await api.get(`groups/${group_id}/join/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`groups/${group_id}/join/`, { withCredentials: true }));
+    }
+};
+
+export const leave_group = async (group_id) => {
+    try{
+        const response = await api.get(`groups/${group_id}/leave/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`groups/${group_id}/leave/`, { withCredentials: true }));
+    }
+};

@@ -18,7 +18,7 @@ class PrivateMessageSerializer(serializers.ModelSerializer):
 class ChatGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatGroup
-        fields = ['id', 'group_name', 'description', 'created_at', 'users_online']
+        fields = ['id', 'group_name', 'description', 'slug', 'created_at', 'users_online']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

@@ -24,7 +24,7 @@ class ChatroomConsumer(WebsocketConsumer):
         
         self.user = self.scope['user']
         self.chatroom_name = self.scope['url_route']['kwargs']['chatroom_name']
-        self.chatroom = get_object_or_404(ChatGroup, group_name=self.chatroom_name)
+        self.chatroom = get_object_or_404(ChatGroup, slug=self.chatroom_name)
 
         # Add user to the group channel layer
         async_to_sync(self.channel_layer.group_add)(
