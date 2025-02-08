@@ -136,19 +136,8 @@ export const update_user = async (values) =>{
     return response.data
 }
 
-// chat endpoints
-// const GET_CHAT_URL = `${BASE_URL}chatrooms/public-chat/messages/`
 
-// export const get_messages = async () => {
-//     try{
-//         const response = await axios.get(GET_CHAT_URL, { withCredentials: true });
-//         return response.data;
-//     }catch(error){
-//         return call_refresh(error, axios.get(GET_CHAT_URL, { withCredentials: true }))
-//     }
-// };
-
-export const get_messages = async (group_name) => {
+export const get_group_messages = async (group_name) => {
     try{
         const response = await api.get(`chatrooms/${group_name}/messages/`, { withCredentials: true });
         return response.data;
@@ -163,5 +152,23 @@ export const get_private_messages = async (group_name) => {
         return response.data;
     }catch(error){
         return call_refresh(error, () => api.get(`${group_name}/private_messages/`, { withCredentials: true }));
+    }
+};
+
+export const create_group = async (groupName, description) => {
+    try{
+        const response = await api.post(`groups/`,{ group_name: groupName, description: description}, {headers: {'Content-Type': 'application/json',}, withCredentials: true});
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.post(`groups/`,{ group_name: groupName, description: description}, {headers: {'Content-Type': 'application/json',}, withCredentials: true}));
+    }
+};
+
+export const get_all_groups = async () => {
+    try{
+        const response = await api.get(`groups_list/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`groups_list/`, { withCredentials: true }));
     }
 };

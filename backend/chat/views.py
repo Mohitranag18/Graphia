@@ -52,7 +52,7 @@ def fetch_private_messages(request, group_name):
     except PrivateChat.DoesNotExist:
         return Response({'error': 'Private chat not found'}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_group(request):
     serializer = ChatGroupSerializer(data=request.data)

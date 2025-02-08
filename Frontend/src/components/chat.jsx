@@ -1,6 +1,6 @@
 import useWebSocket from './useWebSocket';  // Import the WebSocket module
 import { useEffect, useState, useRef } from "react";
-import { get_messages } from "../api/endpoints";
+import { get_group_messages } from "../api/endpoints";
 
 const ChatRoom = () => {
   const { messages, sendMessage, onlineUsersCount } = useWebSocket('public-chat');
@@ -13,7 +13,7 @@ const ChatRoom = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const oldMessages = await get_messages('public-chat');
+      const oldMessages = await get_group_messages('public-chat');
       setOldMessages(oldMessages);
     };
     fetchMessages();

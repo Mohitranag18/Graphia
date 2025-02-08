@@ -15,6 +15,7 @@ import Home from './routes/home.jsx';
 import CreatePost from './routes/create_post.jsx';
 import Search from './routes/search.jsx';
 import EditProfile from './routes/editProfile.jsx';
+import Groups from './routes/groups.jsx';
 
 function App() {
   return (
@@ -28,6 +29,13 @@ function App() {
               </PrivateRoute>
             }
             path="/chat/:roomname"
+          />
+          <Route element={
+              <PrivateRoute>
+                <Groups />
+              </PrivateRoute>
+            }
+            path="/groups/"
           />
           <Route element={
               <PrivateRoute>
