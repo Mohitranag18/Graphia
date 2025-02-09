@@ -204,11 +204,11 @@ export const leave_group = async (group_id) => {
     }
 };
 
-export const get_recent_private_chats = async () => {
+export const get_recent_private_chats = async (query) => {
     try{
-        const response = await api.get(`recent_private_chats/`, { withCredentials: true });
+        const response = await api.get(`recent_private_chats/?q=${query}`, { withCredentials: true });
         return response.data;
     }catch(error){
-        return call_refresh(error, () => api.get(`recent_private_chats/`, { withCredentials: true }));
+        return call_refresh(error, () => api.get(`recent_private_chats/?q=${query}`, { withCredentials: true }));
     }
 };

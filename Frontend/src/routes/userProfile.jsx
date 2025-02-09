@@ -89,11 +89,11 @@ function UserProfile() {
                         <div className="flex justify-center w-full mt-4">
                             {
                                 isOurProfile ?
-                                <button onClick={(route) => handleNavigate('edit/profile')} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Edit</button>
+                                <button onClick={(route) => handleNavigate('edit/profile')} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg cursor-pointer">Edit</button>
                                 :
                                 <div className="flex flex-col gap-2 w-full">
-                                <button onClick={handleToggleFollow} className="bg-blue-500 p-2 py-1 w-full text-lg text-white rounded-lg">{ following ? "Unfollow" : "Follow"}</button>
-                                <button onClick={(route) => handleNavigate(`chat/${username}`)} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg">Message</button>
+                                <button onClick={handleToggleFollow} className="bg-blue-500 p-2 py-1 w-full text-lg text-white rounded-lg cursor-pointer">{ following ? "Unfollow" : "Follow"}</button>
+                                <button onClick={(route) => handleNavigate(`chat/${username}`)} className="bg-gray-400 p-2 py-1 w-full text-lg text-black rounded-lg cursor-pointer">Message</button>
                                 </div>
                             }
                         </div>

@@ -7,11 +7,12 @@ function RecentChat() {
 
     const [recentChats, setRecentChat] = useState([])
     const [loading, setLoading] = useState(true)
+    const [query, setQuery] = useState('')
 
     useEffect(() => {
         const fetchRecentGroups = async () => {
             try{
-                const data = await get_recent_private_chats()
+                const data = await get_recent_private_chats(query)
                 setRecentChat(data)
             }catch{
                 alert('error getting recent chat list')
@@ -21,18 +22,27 @@ function RecentChat() {
             }
             fetchRecentGroups()
     },[])
-    console.log(recentChats)
+
+    const handleSearch = async () => {
+        try{
+            const data = await get_recent_private_chats(query)
+            setRecentChat(data)
+        }catch{
+            alert('error getting recent chat list 2')
+        }
+    }
+
     return ( 
         <>
         <div className='h-112 w-112'>
         <div className='flex flex-col gap-4'>
             <h2 className="text-2xl font-bold">Recent Chats</h2>
             <div className='flex items-center gap-2'>
-                <input className='bg-gray-100 rounded-sm p-2 w-full border-1 border-gray-300'
+                <input onChange={(e) => setQuery(e.target.value)} className='bg-gray-100 rounded-sm p-2 w-full border-1 border-gray-300'
                     type="text"
                     required
                 />
-                <div className='bg-gray-200 p-2 text-2xl rounded-sm cursor-pointer'><IoSearchSharp /></div>
+                <div onClick={handleSearch} className='bg-gray-200 p-2 text-2xl rounded-sm cursor-pointer'><IoSearchSharp /></div>
             </div>
             <div className='flex flex-col gap-4 border-2 border-gray-300 rounded-2xl p-6 h-96'>
                 {

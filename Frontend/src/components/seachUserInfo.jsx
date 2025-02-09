@@ -12,7 +12,7 @@ function SearchUserInfo({username, profile_image, first_name, last_name}) {
 
     return ( 
         <>
-        <div onClick={handleNav} className='flex gap-4 w-full px-4 py-2 items-center rounded-sm bg-gray-100 border-2 border-gray-200'>
+        <div onClick={handleNav} className='cursor-pointer flex gap-4 w-full px-4 py-2 items-center rounded-sm bg-gray-100 border-2 border-gray-200'>
             <div>
                 {
                     profile_image ?

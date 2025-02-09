@@ -43,7 +43,7 @@ function App() {
                 <Groups />
               </PrivateRoute>
             }
-            path="/groups/"
+            path="/chat/"
           />
           <Route element={
               <PrivateRoute>

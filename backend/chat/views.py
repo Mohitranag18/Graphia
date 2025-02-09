@@ -115,10 +115,20 @@ def get_group_details(request, slug):
 @permission_classes([IsAuthenticated])
 def get_recent_private_chats(request):
     user = request.user
+    search_query = request.query_params.get('q', '')  # Get the search query from request parameters
+
+    # Base query to get all recent chats involving the user
     recent_chats = PrivateChat.objects.filter(
-        models.Q(user1=user) | models.Q(user2=user)
+        Q(user1=user) | Q(user2=user)
     ).order_by('-last_message_at')
 
-    # Use a serializer to return the data
+    # Filter by search query if provided
+    if search_query:
+        recent_chats = recent_chats.filter(
+            Q(user1__username__icontains=search_query) |
+            Q(user2__username__icontains=search_query)
+        )
+
+    # Serialize and return the data
     serializer = PrivateChatSerializer(recent_chats, many=True, context={'request': request})
     return Response(serializer.data)

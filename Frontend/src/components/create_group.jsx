@@ -42,7 +42,7 @@ function CreateGroup() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button className='bg-blue-500 text-lg text-white rounded-sm p-2' type="submit">Create Group</button>
+        <button className='bg-blue-500 text-lg text-white rounded-sm p-2 cursor-pointer' type="submit">Create Group</button>
       </form>
       {message && <p>{message}</p>}
     </div>

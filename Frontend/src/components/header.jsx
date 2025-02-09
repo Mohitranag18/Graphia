@@ -29,11 +29,11 @@ function Header() {
         <div className="flex justify-between items-center px-6 py-6 bg-emerald-800 text-white">
             <div className="font-bold text-xl">Graphia</div>
             <div className="flex gap-6 text-xl">
-                <p onClick={(route) => handleNavigate('')}><AiOutlineHome /></p>
-                <p onClick={(route) => handleNavigate('search')} className="text-2xl"><IoMdSearch /></p>
-                <p onClick={(route) => handleNavigate('create/post')}><IoMdAddCircleOutline /></p>
-                <p onClick={(route) => handleNavigate('groups')}><IoChatbubbleEllipsesOutline /></p>
-                <p onClick={handleNavigateUser}><CgProfile /></p>
+                <p onClick={(route) => handleNavigate('')} className="cursor-pointer"><AiOutlineHome /></p>
+                <p onClick={(route) => handleNavigate('search')} className="text-2xl cursor-pointer"><IoMdSearch /></p>
+                <p onClick={(route) => handleNavigate('create/post')} className="cursor-pointer"><IoMdAddCircleOutline /></p>
+                <p onClick={(route) => handleNavigate('chat')} className="cursor-pointer"><IoChatbubbleEllipsesOutline /></p>
+                <p onClick={handleNavigateUser} className="cursor-pointer"><CgProfile /></p>
             </div>
         </div>
         </>

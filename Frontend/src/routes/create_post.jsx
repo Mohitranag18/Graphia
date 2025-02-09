@@ -21,7 +21,7 @@ function CreatePost() {
                 <div className="flex flex-col gap-4 w-full">
                     <label className="text-xl font-semibold">Description</label>
                     <input onChange={(e) => setDescription(e.target.value)} type="text" className="bg-gray-100 rounded-sm p-2 w-full border-1 border-gray-300"/>
-                    <button onClick={handlePost} className="bg-blue-500 text-lg text-white rounded-sm p-2">Post</button>
+                    <button onClick={handlePost} className="bg-blue-500 text-lg text-white cursor-pointer rounded-sm p-2">Post</button>
                 </div>
             </div>
         </div>
