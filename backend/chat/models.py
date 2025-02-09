@@ -35,6 +35,8 @@ class PrivateChat(models.Model):
     user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='chat_user2')
     group_name = models.CharField(max_length=128, unique=True, blank=True)  # Keep the field blank initially
     created_at = models.DateTimeField(auto_now_add=True)
+    last_message_at = models.DateTimeField(auto_now=True)  # Automatically updated
+
 
     def save(self, *args, **kwargs):
         # Set group_name dynamically based on user1 and user2 usernames
@@ -58,3 +60,9 @@ class PrivateMessage(models.Model):
 
     class Meta:
         ordering = ['-created']
+    
+    def save(self, *args, **kwargs):
+        # Save the message and update the last message timestamp in the chat
+        super(PrivateMessage, self).save(*args, **kwargs)
+        self.chat.last_message_at = self.created
+        self.chat.save()

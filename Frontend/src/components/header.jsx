@@ -26,7 +26,7 @@ function Header() {
 
     return (  
         <>
-        <div className="flex justify-between items-center px-6 py-6 bg-blue-900 text-white">
+        <div className="flex justify-between items-center px-6 py-6 bg-emerald-800 text-white">
             <div className="font-bold text-xl">Graphia</div>
             <div className="flex gap-6 text-xl">
                 <p onClick={(route) => handleNavigate('')}><AiOutlineHome /></p>

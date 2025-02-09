@@ -36,6 +36,7 @@ function GroupInfo() {
         };
         fetchMessages();
     }, [groupName]);
+    console.log(groupDetails)
 
     const isMember = members.includes(username);
 
@@ -58,7 +59,6 @@ function GroupInfo() {
         console.error("Failed to leave group:", error);
     }
     };
-      
 
     return ( 
         <>
@@ -66,7 +66,7 @@ function GroupInfo() {
             <div className="flex flex-col gap-2">
                 <p className="text-lg font-bold">{groupDetails.group_name}</p>
                 <p>{groupDetails.description}</p>
-                <p>{groupDetails.created_at}</p>
+                <p>{groupDetails.formatted_date}</p>
             </div>
             <div className="flex gap-4">
                 {

@@ -3,9 +3,11 @@ from django.http import JsonResponse, Http404
 from rest_framework.response import Response
 from rest_framework import status
 from .models import ChatGroup, GroupMessage, PrivateChat, PrivateMessage
-from .serializers import GroupMessageSerializer, PrivateMessageSerializer, ChatGroupSerializer, UserSerializer
+from .serializers import GroupMessageSerializer, PrivateMessageSerializer, ChatGroupSerializer, UserSerializer, PrivateChatSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.db.models import Q
+from django.db import models
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -88,7 +90,17 @@ def leave_group(request, group_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_groups(request):
-    groups = ChatGroup.objects.values('id', 'group_name', 'slug', 'description', 'created_at')
+    search_query = request.GET.get('search', '')  # Get the search query from the request
+    if search_query:
+        # Filter groups based on the search query
+        groups = ChatGroup.objects.filter(
+            Q(group_name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        ).values('id', 'group_name', 'slug', 'description', 'created_at')
+    else:
+        # Return all groups by default
+        groups = ChatGroup.objects.values('id', 'group_name', 'slug', 'description', 'created_at')
+    
     return JsonResponse(list(groups), safe=False)
 
 @api_view(['GET'])
@@ -96,4 +108,17 @@ def get_all_groups(request):
 def get_group_details(request, slug):
     group = get_object_or_404(ChatGroup, slug=slug)
     serializer = ChatGroupSerializer(group)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_recent_private_chats(request):
+    user = request.user
+    recent_chats = PrivateChat.objects.filter(
+        models.Q(user1=user) | models.Q(user2=user)
+    ).order_by('-last_message_at')
+
+    # Use a serializer to return the data
+    serializer = PrivateChatSerializer(recent_chats, many=True, context={'request': request})
     return Response(serializer.data)

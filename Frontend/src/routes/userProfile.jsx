@@ -60,7 +60,7 @@ function UserProfile() {
     }
 
     return (
-        <div className="min-h-screen p-8 w-screen flex flex-col items-center">
+        <div className="min-h-screen p-8 flex flex-col items-center">
             <div className="flex flex-col gap-6 w-[80%]">
                 <div>
                     <p className="text-4xl font-semibold">{ loading ? '' : `@${username}`}</p>

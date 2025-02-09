@@ -122,8 +122,12 @@ export const create_post = async (description) => {
 };
 
 export const get_posts = async (num) =>{
-    const response = await api.get(`get_posts/?page=${num}`)
-    return response.data
+    try{
+        const response = await api.get(`get_posts/?page=${num}`)
+        return response.data
+    }catch(error){
+        return call_refresh(error, () => api.get(`get_posts/?page=${num}`));
+    }
 }
 
 export const search_users = async (search) =>{
@@ -164,12 +168,12 @@ export const create_group = async (groupName, description) => {
     }
 };
 
-export const get_all_groups = async () => {
+export const get_all_groups = async (query) => {
     try{
-        const response = await api.get(`groups_list/`, { withCredentials: true });
+        const response = await api.get(`groups_list/?search=${query}`, { withCredentials: true });
         return response.data;
     }catch(error){
-        return call_refresh(error, () => api.get(`groups_list/`, { withCredentials: true }));
+        return call_refresh(error, () => api.get(`groups_list/?search=${query}`, { withCredentials: true }));
     }
 };
 
@@ -197,5 +201,14 @@ export const leave_group = async (group_id) => {
         return response.data;
     }catch(error){
         return call_refresh(error, () => api.get(`groups/${group_id}/leave/`, { withCredentials: true }));
+    }
+};
+
+export const get_recent_private_chats = async () => {
+    try{
+        const response = await api.get(`recent_private_chats/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`recent_private_chats/`, { withCredentials: true }));
     }
 };
