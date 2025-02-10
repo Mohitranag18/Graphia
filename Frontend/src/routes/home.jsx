@@ -53,7 +53,7 @@ function Home() {
                 )}
                 <div className="mt-8">
                     {nextPage && posts.length > 0 && !loading && (
-                        <button onClick={loadMorePosts} className="p-4">
+                        <button onClick={loadMorePosts} className="p-4 hover:bg-gray-100 rounded-md cursor-pointer">
                             Load More
                         </button>
                     )}
