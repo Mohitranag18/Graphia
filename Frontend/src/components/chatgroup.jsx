@@ -1,15 +1,14 @@
-import useWebSocket from './useWebSocket';  // Import the WebSocket module
+import useWebSocket from './useWebSocket';  // Import WebSocket module
 import { useEffect, useState, useRef } from "react";
 import { get_group_messages } from "../api/endpoints";
+import { create_files_message } from "../api/endpoints";  // Import API function
 import { useNavigate } from "react-router-dom";
 
 const ChatRoom = () => {
-
   const nav = useNavigate();
-
   const handleNavigate = (route) => {
-      nav(`${route}`)
-  }
+      nav(`${route}`);
+  };
 
   const getGroupNameFromUrl = () => {
     const urlSplit = window.location.pathname.split('/');
@@ -17,15 +16,14 @@ const ChatRoom = () => {
   };
 
   const [groupName, setGroupName] = useState(getGroupNameFromUrl());
-  
-
   const { messages, sendMessage, onlineUsersCount } = useWebSocket(groupName);
   const [newMessage, setNewMessage] = useState('');
+  const [file, setFile] = useState(null);
   const [oldMessages, setOldMessages] = useState([]);
-  const messagesEndRef = useRef(null); // Ref to scroll to bottom
+  const messagesEndRef = useRef(null);
 
   const storage = JSON.parse(localStorage.getItem('userData'))
-  const [username, setUsername] = useState(storage ? storage.username : '')
+  const [username, setUsername] = useState(storage ? storage.username : '');
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -35,35 +33,68 @@ const ChatRoom = () => {
     fetchMessages();
   }, [groupName]);
 
-  // Scroll to the bottom of the messages container
+  // Scroll to the bottom when messages update
   useEffect(() => {
-    // Only scroll to the bottom of the inner messages container
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, oldMessages]);
 
-  const handleSend = () => {
-    sendMessage(newMessage, username);
-    setNewMessage(''); // Clear input field
+  // Handle File Selection
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  // Handle Send Message
+  const handleSend = async () => {
+    if (!newMessage && !file) return; // Prevent empty messages
+
+    // Send WebSocket message if it's only text
+    if (newMessage && !file) {
+      sendMessage(newMessage, username);
+    }
+
+    // Handle File Upload via API
+    const formData = new FormData();
+    formData.append("group", groupName);
+    formData.append("body", newMessage);
+    if (file) {
+      formData.append("file", file);
+    }
+
+    try {
+      const response = await create_files_message(groupName, newMessage, file);
+      console.log("File uploaded successfully:", response);
+      setFile(null);
+      setNewMessage('');
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
   };
 
   return (
     <div>
       <div className="flex flex-col items-center max-w-2xl mx-auto m-4 space-y-4 p-6 py-4 border border-gray-300 rounded-lg bg-white shadow-lg">
-        {/* Messages Container */}
+        {/* Header */}
         <div className='flex justify-between w-full'>
           <p className='text-sm mb-4'>Online Users: {onlineUsersCount}</p>
-          <p onClick={(route) => handleNavigate(`/chatroom/${groupName}/info`)} className='text-md font-bold text-blue-500 hover:underline cursor-pointer'>{groupName}</p>
+          <p onClick={() => handleNavigate(`/chatroom/${groupName}/info`)} className='text-md font-bold text-blue-500 hover:underline cursor-pointer'>
+            {groupName}
+          </p>
         </div>
+
+        {/* Messages Container */}
         <div className="w-full h-96 overflow-y-auto space-y-2 p-2 bg-gray-50 rounded-lg shadow-inner hide-scrollbar">
-          {/* Old Messages */}
           {oldMessages.map((message) => (
             <div key={message.id} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
               <strong className="text-sm text-blue-600">{message.author}</strong>
               <p className="text-gray-800 text-sm">{message.body}</p>
+              {message.file && (
+                <a href={message.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                  View File
+                </a>
+              )}
             </div>
           ))}
 
-          {/* New Messages */}
           {messages.map((msg, index) => (
             <div key={index} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
               <strong className="text-sm text-blue-600">{msg.author}</strong>
@@ -83,6 +114,11 @@ const ChatRoom = () => {
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="p-2 border border-gray-300 rounded-md"
           />
           <button
             onClick={handleSend}

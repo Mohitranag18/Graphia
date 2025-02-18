@@ -11,4 +11,5 @@ urlpatterns = [
     path('api/groups_list/', get_all_groups, name='get_all_groups'),
     path('api/groups_details/<str:slug>/', get_group_details, name='get_group_details'),
     path('api/recent_private_chats/', get_recent_private_chats, name='get_recent_private_chats'),
+    path('api/group/<str:slug>/messages/', create_files_message, name='group-message-create'),
 ]

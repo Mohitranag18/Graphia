@@ -17,7 +17,7 @@ def fetch_messages(request, slug):
         chat_group = get_object_or_404(ChatGroup, slug=slug)
         
         # Get the last 30 messages (reverse order for latest)
-        messages = chat_group.chat_messages.all().order_by('created')[:30]
+        messages = chat_group.chat_messages.all().order_by('created')[:500]
         
         # Serialize the messages
         serializer = GroupMessageSerializer(messages, many=True)
@@ -132,3 +132,26 @@ def get_recent_private_chats(request):
     # Serialize and return the data
     serializer = PrivateChatSerializer(recent_chats, many=True, context={'request': request})
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_files_message(request, slug):
+    """
+    Create a new message for a specific group. Supports both text messages and file uploads.
+    """
+    group = get_object_or_404(ChatGroup, slug=slug)
+
+    # Attach the authenticated user as the author
+    data = request.data.copy()
+    data['author'] = request.user.username
+    data['group'] = group.slug
+
+    # Serialize and validate the data
+    serializer = GroupMessageSerializer(data=data)
+    if serializer.is_valid():
+        # Save the message (text or file) to the database
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

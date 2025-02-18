@@ -4,10 +4,18 @@ from base.models import MyUser
 
 class GroupMessageSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source='author.username')
+    group = serializers.SlugRelatedField(slug_field='slug', queryset=ChatGroup.objects.all())
 
     class Meta:
         model = GroupMessage
-        fields = ['body', 'author', 'created']
+        fields = ['id', 'group', 'author', 'body', 'file', 'created']
+        read_only_fields = ['id', 'author', 'created']
+    
+    def create(self, validated_data):
+        author_data = validated_data.pop('author')  # Extract the author data
+        author = MyUser.objects.get(username=author_data['username'])  # Get MyUser instance
+        group_message = GroupMessage.objects.create(author=author, **validated_data)  # Save with correct author
+        return group_message
 
 class PrivateMessageSerializer(serializers.ModelSerializer):
 
