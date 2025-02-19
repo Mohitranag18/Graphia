@@ -68,7 +68,7 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
     }
   };
 
-  return { messages, sendMessage, onlineUsersCount };
+  return { messages, sendMessage, onlineUsersCount, setMessages };
 };
 
 export default useWebSocket;

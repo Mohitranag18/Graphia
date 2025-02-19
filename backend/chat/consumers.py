@@ -47,6 +47,7 @@ class ChatroomConsumer(WebsocketConsumer):
             text_data_json = json.loads(text_data)
             body = text_data_json['body']
 
+        
             message = GroupMessage.objects.create(
                 body=body,
                 author=self.user,
@@ -72,6 +73,14 @@ class ChatroomConsumer(WebsocketConsumer):
     def message_handler(self, event):
         self.send(text_data=json.dumps({
             'message': event['message'],
+            'author': event['author'],
+            'timestamp': event['timestamp']
+        }))
+
+    def file_handler(self, event):
+        self.send(text_data=json.dumps({
+            'message': event['message'],
+            'file': event['file'],
             'author': event['author'],
             'timestamp': event['timestamp']
         }))

@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { get_group_messages } from "../api/endpoints";
 import { create_files_message } from "../api/endpoints";  // Import API function
 import { useNavigate } from "react-router-dom";
+import {SERVER_URL} from '../api/endpoints'
 
 const ChatRoom = () => {
   const nav = useNavigate();
@@ -16,11 +17,13 @@ const ChatRoom = () => {
   };
 
   const [groupName, setGroupName] = useState(getGroupNameFromUrl());
-  const { messages, sendMessage, onlineUsersCount } = useWebSocket(groupName);
+  const { messages, sendMessage, onlineUsersCount, setMessages } = useWebSocket(groupName);
   const [newMessage, setNewMessage] = useState('');
   const [file, setFile] = useState(null);
   const [oldMessages, setOldMessages] = useState([]);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null); // Add a ref for the file input
+
 
   const storage = JSON.parse(localStorage.getItem('userData'))
   const [username, setUsername] = useState(storage ? storage.username : '');
@@ -50,24 +53,39 @@ const ChatRoom = () => {
     // Send WebSocket message if it's only text
     if (newMessage && !file) {
       sendMessage(newMessage, username);
+      setNewMessage('');
     }
-
-    // Handle File Upload via API
+    else{
+      // Handle File Upload via API
     const formData = new FormData();
     formData.append("group", groupName);
     formData.append("body", newMessage);
     if (file) {
       formData.append("file", file);
     }
-
     try {
       const response = await create_files_message(groupName, newMessage, file);
       console.log("File uploaded successfully:", response);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Clear the file input field
+      }
       setFile(null);
       setNewMessage('');
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          message: response.body,
+          author: response.author,
+          file: response.file,
+          timestamp: response.created,
+        }
+      ]);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
+    }
+
+    
   };
 
   return (
@@ -86,19 +104,28 @@ const ChatRoom = () => {
           {oldMessages.map((message) => (
             <div key={message.id} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
               <strong className="text-sm text-blue-600">{message.author}</strong>
-              <p className="text-gray-800 text-sm">{message.body}</p>
-              {message.file && (
-                <a href={message.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                  View File
-                </a>
-              )}
+              <div className='bg-green-300 flex flex-col gap-1 p-4 rounded-xl'>
+                {message.file && (
+                  <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                  </a>
+                )}
+                <p className="text-gray-800 text-sm">{message.message}</p>
+              </div>
             </div>
           ))}
 
           {messages.map((msg, index) => (
             <div key={index} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
               <strong className="text-sm text-blue-600">{msg.author}</strong>
-              <p className="text-gray-800 text-sm">{msg.message}</p>
+              <div className='bg-green-300 flex flex-col gap-1 p-4 rounded-xl'>
+                {msg.file && (
+                  <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                  </a>
+                )}
+                <p className="text-gray-800 text-sm">{msg.message}</p>
+              </div>
             </div>
           ))}
 
@@ -118,6 +145,7 @@ const ChatRoom = () => {
           <input
             type="file"
             onChange={handleFileChange}
+            ref={fileInputRef}
             className="p-2 border border-gray-300 rounded-md"
           />
           <button
