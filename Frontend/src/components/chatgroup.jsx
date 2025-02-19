@@ -16,8 +16,9 @@ const ChatRoom = () => {
     return urlSplit[urlSplit.length - 1];
   };
 
+
   const [groupName, setGroupName] = useState(getGroupNameFromUrl());
-  const { messages, sendMessage, onlineUsersCount, setMessages } = useWebSocket(groupName);
+  const { messages, sendMessage, onlineUsersCount } = useWebSocket(groupName);
   const [newMessage, setNewMessage] = useState('');
   const [file, setFile] = useState(null);
   const [oldMessages, setOldMessages] = useState([]);
@@ -52,8 +53,12 @@ const ChatRoom = () => {
 
     // Send WebSocket message if it's only text
     if (newMessage && !file) {
-      sendMessage(newMessage, username);
+      sendMessage(newMessage, null, username);
       setNewMessage('');
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Clear the file input field
+      }
+      setFile(null);
     }
     else{
       // Handle File Upload via API
@@ -66,27 +71,19 @@ const ChatRoom = () => {
     try {
       const response = await create_files_message(groupName, newMessage, file);
       console.log("File uploaded successfully:", response);
+
+      sendMessage(response.body, response.file, username);
+
       if (fileInputRef.current) {
         fileInputRef.current.value = ""; // Clear the file input field
       }
       setFile(null);
       setNewMessage('');
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          message: response.body,
-          author: response.author,
-          file: response.file,
-          timestamp: response.created,
-        }
-      ]);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
-    }
-
-    
-  };
+    } 
+  }; 
 
   return (
     <div>
@@ -102,31 +99,57 @@ const ChatRoom = () => {
         {/* Messages Container */}
         <div className="w-full h-96 overflow-y-auto space-y-2 p-2 bg-gray-50 rounded-lg shadow-inner hide-scrollbar">
           {oldMessages.map((message) => (
-            <div key={message.id} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
-              <strong className="text-sm text-blue-600">{message.author}</strong>
+            username == message.author ?(
+              <div key={message.id} className="flex items-start justify-end space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
               <div className='bg-green-300 flex flex-col gap-1 p-4 rounded-xl'>
                 {message.file && (
                   <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
                   </a>
                 )}
-                <p className="text-gray-800 text-sm">{message.message}</p>
+                <p className="text-gray-800 text-sm">{message.body}</p>
               </div>
-            </div>
+              {/* <strong className="text-sm text-blue-600">{message.author}</strong> */}
+              </div>)
+              :
+              (<div key={message.id} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
+              <strong className="text-sm text-blue-600">{message.author}</strong>
+              <div className='bg-red-300 flex flex-col gap-1 p-4 rounded-xl'>
+                {message.file && (
+                  <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
+                  </a>
+                )}
+                <p className="text-gray-800 text-sm">{message.body}</p>
+              </div>
+              </div>)
           ))}
 
           {messages.map((msg, index) => (
-            <div key={index} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
-              <strong className="text-sm text-blue-600">{msg.author}</strong>
-              <div className='bg-green-300 flex flex-col gap-1 p-4 rounded-xl'>
-                {msg.file && (
-                  <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                    <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
-                  </a>
-                )}
-                <p className="text-gray-800 text-sm">{msg.message}</p>
-              </div>
-            </div>
+            username == msg.author ?(
+              <div key={index} className="flex items-start justify-end space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
+                {/* <strong className="text-sm text-blue-600">{msg.author}</strong> */}
+                <div className='bg-green-300 flex flex-col gap-1 p-4 rounded-xl'>
+                  {msg.file && (
+                    <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                    </a>
+                  )}
+                  <p className="text-gray-800 text-sm">{msg.message}</p>
+                </div>
+              </div>)
+              :
+              (<div key={index} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
+                <strong className="text-sm text-blue-600">{msg.author}</strong>
+                <div className='bg-red-300 flex flex-col gap-1 p-4 rounded-xl'>
+                  {msg.file && (
+                    <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                    </a>
+                  )}
+                  <p className="text-gray-800 text-sm">{msg.message}</p>
+                </div>
+              </div>)
           ))}
 
           {/* Scroll to bottom */}

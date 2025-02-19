@@ -18,10 +18,14 @@ class GroupMessageSerializer(serializers.ModelSerializer):
         return group_message
 
 class PrivateMessageSerializer(serializers.ModelSerializer):
+    chat = serializers.SlugRelatedField(
+        queryset=PrivateChat.objects.all(),
+        slug_field='group_name'  # Use group_name instead of ID
+    )
 
     class Meta:
         model = PrivateMessage
-        fields = ['body', 'sender', 'created']
+        fields = ['chat', 'sender', 'body', 'file', 'created']
 
 class ChatGroupSerializer(serializers.ModelSerializer):
     formatted_date = serializers.SerializerMethodField()

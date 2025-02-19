@@ -221,3 +221,12 @@ export const create_files_message = async (group, body, file) => {
         return call_refresh(error, () => api.post(`group/${group}/messages/`,{ group: group, body: body, file: file}, {headers: {'Content-Type': "multipart/form-data",}, withCredentials: true}));
     }
 };
+
+export const create_private_files_message = async (chat, body, file) => {
+    try{
+        const response = await api.post(`group/${chat}/private_messages/`,{ chat: chat, body: body, file: file}, {headers: {'Content-Type': "multipart/form-data",}, withCredentials: true});
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.post(`group/${chat}/private_messages/`,{ chat: chat, body: body, file: file}, {headers: {'Content-Type': "multipart/form-data",}, withCredentials: true}));
+    }
+};

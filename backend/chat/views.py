@@ -17,7 +17,7 @@ def fetch_messages(request, slug):
         chat_group = get_object_or_404(ChatGroup, slug=slug)
         
         # Get the last 30 messages (reverse order for latest)
-        messages = chat_group.chat_messages.all().order_by('created')[:500]
+        messages = chat_group.chat_messages.all().order_by('created')
         
         # Serialize the messages
         serializer = GroupMessageSerializer(messages, many=True)
@@ -154,4 +154,30 @@ def create_files_message(request, slug):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Only authenticated users can send messages
+def create_private_files_message(request, group_name):
+    """
+    Create a new private message in an existing chat.
+    """
+    user = request.user  # Get the authenticated user
+    chat = get_object_or_404(PrivateChat, group_name=group_name)  # Fetch the chat
+
+    # Check if the authenticated user is part of the chat
+    if user not in [chat.user1, chat.user2]:
+        return Response({'error': 'You are not a participant in this chat.'}, status=status.HTTP_403_FORBIDDEN)
+
+    # Extract message data from the request
+    data = request.data.copy()
+    data['chat'] = chat.group_name  
+    data['sender'] = user.username  
+
+    serializer = PrivateMessageSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

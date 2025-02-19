@@ -34,11 +34,13 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
       }
 
       // Handle normal message events
-      if (data.message && data.message.trim() !== '') {
+      if(data.message && data.message.trim() !== '') {
+        console.log('Received message 2:');
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             message: data.message,
+            file: data.file,
             author: data.author,
             timestamp: data.timestamp,
           }
@@ -57,18 +59,22 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
     };
   }, [chatroomName, isPrivateChat]);
 
-  const sendMessage = (message, username) => {
+  const sendMessage = (message, file, username) => {
+    if (!message.trim() && !file) return; // Prevent sending empty messages
+  
     if (socket) {
       const messageData = {
-        body: message,
+        body: message.trim(),
+        file: file || null,
         author: username,
       };
       console.log('Sending message:', messageData);
       socket.send(JSON.stringify(messageData));
     }
   };
+  
 
-  return { messages, sendMessage, onlineUsersCount, setMessages };
+  return { messages, sendMessage, onlineUsersCount };
 };
 
 export default useWebSocket;

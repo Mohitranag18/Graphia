@@ -40,47 +40,51 @@ class ChatroomConsumer(WebsocketConsumer):
             self.chatroom_name, self.channel_name
         )
 
-
     def receive(self, text_data):
-        print("Received message:", text_data)  # Debugging line
+        print("Received message in backend: ", text_data)  # Debugging line
+
         try:
             text_data_json = json.loads(text_data)
-            body = text_data_json['body']
+            # Trim the body to remove any whitespace
+            body = text_data_json.get('body', '').strip()
+            file_url = text_data_json.get('file', None)  # File URL (if any)
 
-        
-            message = GroupMessage.objects.create(
-                body=body,
-                author=self.user,
-                group=self.chatroom
-            )
+            # If both body is empty and there's no file URL, ignore this message.
+            if not body and not file_url:
+                print("Empty message received. Ignoring.")
+                return
 
-            print(f"Message created: {message}")  # Debugging line
 
+            # Prepare the event
             event = {
                 'type': 'message_handler',
-                'message': message.body,
-                'author': message.author.username,
-                'timestamp': message.created.strftime('%Y-%m-%d %H:%M:%S')
+                'message': body,
+                'author': self.user.username,
+                'timestamp': None,  # No timestamp since it's not stored
+                'file_url': file_url if file_url else None
             }
 
-            # Send the event to the group (chatroom)
+            if not file_url:  # If no file, save the message in the database
+                message = GroupMessage.objects.create(
+                    body=body,
+                    author=self.user,
+                    group=self.chatroom
+                )
+                event['timestamp'] = message.created.strftime('%Y-%m-%d %H:%M:%S')
+
+            # Send the event in real time
             async_to_sync(self.channel_layer.group_send)(
                 self.chatroom_name, event
             )
+
         except Exception as e:
             print(f"Error in processing WebSocket message: {e}")
+
 
     def message_handler(self, event):
         self.send(text_data=json.dumps({
             'message': event['message'],
-            'author': event['author'],
-            'timestamp': event['timestamp']
-        }))
-
-    def file_handler(self, event):
-        self.send(text_data=json.dumps({
-            'message': event['message'],
-            'file': event['file'],
+            'file': event['file_url'],
             'author': event['author'],
             'timestamp': event['timestamp']
         }))
@@ -160,43 +164,56 @@ class PrivateChatConsumer(WebsocketConsumer):
 
 
     def receive(self, text_data):
-        print("Received message:", text_data)  # Debugging line
+        print("Received message in backend: ", text_data)  # Debugging line
+
         try:
             text_data_json = json.loads(text_data)
-            body = text_data_json.get("body")
+            # Trim the body to remove any whitespace
+            body = text_data_json.get('body', '').strip()
+            file_url = text_data_json.get('file', None)  # File URL (if any)
 
-            # Save the private message
-            private_chat, _ = PrivateChat.objects.get_or_create(
-                user1=min(self.user, self.other_user, key=lambda u: u.username),
-                user2=max(self.user, self.other_user, key=lambda u: u.username)
-            )
+            # If both body is empty and there's no file URL, ignore this message.
+            if not body and not file_url:
+                print("Empty message received. Ignoring.")
+                return
+        
+            # Prepare the event
+            event = {
+                'type': 'message_handler',
+                'message': body,
+                'author': self.user.username,
+                'timestamp': None,  # No timestamp since it's not stored
+                'file_url': file_url if file_url else None
+            }
 
-            message = PrivateMessage.objects.create(
-                chat=private_chat,
-                sender=self.user,
-                body=body
-            )
+            if not file_url:  # If no file, save the message in the database
+                # Save the private message
+                private_chat, _ = PrivateChat.objects.get_or_create(
+                    user1=min(self.user, self.other_user, key=lambda u: u.username),
+                    user2=max(self.user, self.other_user, key=lambda u: u.username)
+                )
+                message = PrivateMessage.objects.create(
+                    chat=private_chat,
+                    sender=self.user,
+                    body=body
+                )
+                event['timestamp'] = message.created.strftime('%Y-%m-%d %H:%M:%S')
 
-            # Broadcast the message
+            # Send the event in real time
             async_to_sync(self.channel_layer.group_send)(
-                self.chat_room, {
-                    "type": "message_handler",
-                    "message": message.body,
-                    "author": message.sender.username,
-                    "timestamp": message.created.strftime("%Y-%m-%d %H:%M:%S")
-                }
+                self.chat_room, event
             )
-                        
-            print(f"Message created: {message}")  # Debugging line
 
         except Exception as e:
             print(f"Error in processing WebSocket message: {e}")
 
+
     def message_handler(self, event):
         self.send(text_data=json.dumps({
-            "message": event["message"],
-            "author": event["author"],
-            "timestamp": event["timestamp"]
+            'message': event['message'],
+            'file': event['file_url'],
+            'author': event['author'],
+            'timestamp': event['timestamp']
         }))
 
     def authenticate_user(self, cookie):

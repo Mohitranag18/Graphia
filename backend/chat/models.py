@@ -53,7 +53,8 @@ class PrivateChat(models.Model):
 class PrivateMessage(models.Model):
     chat = models.ForeignKey(PrivateChat, related_name='private_messages', on_delete=models.CASCADE)
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    body = models.TextField()
+    body = models.TextField(blank=True, null=True)
+    file = models.FileField(upload_to='files/', blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
