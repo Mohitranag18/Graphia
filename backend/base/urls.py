@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_users_posts, toggleLike, create_post, get_posts, search_user, update_user_details
+from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_users_posts, toggleLike, create_post, get_posts, search_user, update_user_details, change_password
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -11,7 +11,8 @@ urlpatterns = [
     path('notes/', get_notes, name='get_notes'),  # GET method for fetching notes
     path('logout/', logout, name='logout'),  # POST method for logging out
     path('authenticated/', is_authenticated, name='is_authenticated'),  # POST method to check if authenticated
-    path('register/', register, name='register'),  # POST method for registration
+    path('register/', register, name='register'),  # POST method for registration,
+    path('change_password/', change_password, name='change_password'),
     path('user_data/<str:pk>/', get_user_profile_data, name='get_user_profile_data'),  # GET method for fetching user data
     path('toggle_follow/', toggleFollow),
     path('posts/<str:pk>/', get_users_posts),
