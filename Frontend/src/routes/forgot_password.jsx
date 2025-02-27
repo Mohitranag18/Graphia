@@ -21,6 +21,7 @@ function ForgotPassword() {
         setLinkSended(true)
       } catch (error) {
         setMessage(error.response?.data?.error || "Error sending reset link"); 
+        setLinkSended(false)
         console.error("Error in Sending Reset Link", error);
       }
   };
