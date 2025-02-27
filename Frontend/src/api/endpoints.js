@@ -88,6 +88,13 @@ const api = axios.create({
     baseURL:BASE_URL,
     withCredentials:true
 })
+
+export const request_password_reset = async (email) => {
+    const response = await api.post(`requestPasswordReset/`, {email: email});
+    return response.data;
+};
+
+
 export const get_user_profile_info = async (username) => {
     try{
         const response = await api.get(`user_data/${username}/`, { withCredentials: true });
