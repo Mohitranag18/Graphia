@@ -176,3 +176,11 @@ SIMPLE_JWT = {
     'ALGORITHM': 'HS256',  # Default algorithm (HS256)
     'SIGNING_KEY': SECRET_KEY,  # Use Django's SECRET_KEY for signing JWT tokens
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Example: smtp.gmail.com
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'mohitr8998@gmail.com'
+EMAIL_HOST_PASSWORD = 'zfsl fbqn anod gegg '

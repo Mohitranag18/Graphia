@@ -4,6 +4,8 @@ from .models import MyUser
 from .models import Note, Post
 from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer, UserSerializer
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 
 # Import the custom user model
 MyUser = get_user_model()
@@ -143,6 +145,59 @@ def change_password(request):
     user.save()
 
     return Response({"success": "Password changed successfully"}, status=200)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def request_password_reset(request):
+    email = request.data.get("email")
+    if not email:
+        return Response({"error": "Email is required"}, status=400)
+
+    try:
+        user = MyUser.objects.get(email=email)
+    except MyUser.DoesNotExist:
+        return Response({"error": "User with this email does not exist"}, status=400)
+
+    # Generate a password reset token
+    token = default_token_generator.make_token(user)
+    
+    # Normally, you'd generate a reset link with frontend URL
+    reset_link = f"http://localhost:5173/resetPassword/{user.username}/{token}"
+
+    # Send email with reset link
+    send_mail(
+        "Password Reset Request",
+        f"Click the link to reset your password: {reset_link}",
+        "mohitr8998@gmail.com",
+        [email],
+        fail_silently=False,
+    )
+
+    return Response({"success": "Password reset link sent to email"}, status=200)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request, username, token):
+    new_password = request.data.get("new_password")
+    
+    if not new_password:
+        return Response({"error": "New password is required"}, status=400)
+
+    try:
+        user = MyUser.objects.get(username=username)
+    except MyUser.DoesNotExist:
+        return Response({"error": "Invalid user"}, status=400)
+
+    # Validate token
+    if not default_token_generator.check_token(user, token):
+        return Response({"error": "Invalid or expired token"}, status=400)
+
+    # Update password
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"success": "Password reset successful"}, status=200)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

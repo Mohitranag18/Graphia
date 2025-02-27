@@ -12,8 +12,8 @@ const Login = () => {
     await loginUser(username, password);
   };
 
-  const handleNavigate = () => {
-    nav('/register');
+  const handleNavigate = (route) => {
+    nav(`${route}`);
   };
 
   return (
@@ -46,12 +46,20 @@ const Login = () => {
         >
           Login
         </button>
+        <div className='flex justify-between'>
         <p
-          onClick={handleNavigate}
+          onClick={(route)=> handleNavigate('/register')}
           className="mt-4 text-sm text-gray-600 cursor-pointer hover:text-blue-500"
         >
           Don't have an account? Sign up
         </p>
+        <p
+          onClick={(route)=> handleNavigate('/forgotPassword')}
+          className="mt-4 text-sm text-gray-600 cursor-pointer hover:text-blue-500"
+        >
+          Forgot Password?
+        </p>
+        </div>
       </div>
     </div>
   );

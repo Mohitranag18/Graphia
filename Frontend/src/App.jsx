@@ -17,6 +17,8 @@ import Search from './routes/search.jsx';
 import EditProfile from './routes/editProfile.jsx';
 import Groups from './routes/groups.jsx';
 import GroupInfo from './components/group_info.jsx';
+import ForgotPassword from './routes/forgot_password.jsx';
+import ResetPassword from './routes/reset_password.jsx';
 
 function App() {
   return (
@@ -89,6 +91,8 @@ function App() {
           />
           <Route element={<Login />} path="/login" />
           <Route element={<Register />} path="/register" />
+          <Route element={<ForgotPassword />} path="/forgotPassword" />
+          <Route element={<ResetPassword />} path="/resetPassword/:username/:token" />
         </Routes>
       </AuthProvider>
     </Router>
