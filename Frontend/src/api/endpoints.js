@@ -128,8 +128,8 @@ export const toggleLike = async (id) => {
     return response.data;
 };
 
-export const create_post = async (description) => {
-    const response = await api.post('create_post/',{ description }, { withCredentials: true });
+export const create_post = async (value) => {
+    const response = await api.post('create_post/', value,{ headers:{'Content-Type': 'multipart/form-data'}}, { withCredentials: true });
     return response.data;
 };
 

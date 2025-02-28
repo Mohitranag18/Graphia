@@ -300,23 +300,21 @@ def toggleLike(request):
 @permission_classes([IsAuthenticated])
 def create_post(request):
     try:
-        data = request.data
+        user = request.user  # Get authenticated user
 
-        try:
-            user = MyUser.objects.get(username=request.user.username)
-        except MyUser.DoesNotExist:
-            return Response({"error":"user does not exist"})
-        
-        post = Post.objects.create(
-            user=user,
-            description=data['description']
-        )
+        # Use request.FILES for image uploads
+        post_image = request.FILES.get("post_image")
+        description = request.data.get("description")
 
-        serializer = PostSerializer(post, many=False)
+        if not description:
+            return Response({"error": "Description is required."}, status=400)
 
-        return Response(serializer.data)
-    except:
-        return Response({"error":"error creating post"})
+        # Create post instance and save
+        post = Post.objects.create(user=user, description=description, post_image=post_image)
+        return Response({"success": True, "post_id": post.id})
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -372,3 +370,5 @@ def update_user_details(request):
         serializer.save()
         return Response({**serializer.data, "success":True})
     return Response({**serializer.errors, "success":False})
+
+

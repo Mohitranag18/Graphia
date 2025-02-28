@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaRegHeart } from "react-icons/fa";
+import {SERVER_URL} from '../api/endpoints'
 
+import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { toggleLike } from "../api/endpoints";
 
 
-function Post({id, username, description, formatted_date, liked, like_count}) {
+function Post({id, username, description, formatted_date, post_image, liked, like_count}) {
 
     const nav = useNavigate();
 
@@ -34,22 +35,30 @@ function Post({id, username, description, formatted_date, liked, like_count}) {
             <div className="w-full py-2 px-4 bg-gray-200 border-2 border-gray-300 rounded-t-2xl">
                 <p onClick={(route) => handleNavigate(`/user/${username}`)} className="text-lg font-semibold cursor-pointer">{`@${username}`}</p>
             </div>
-            <div className="w-full h-70 p-6 bg-gray-100 border-x-2 border-gray-300 flex justify-center items-center">
-                <p className="text-lg">{description}</p>
+            <div className="w-full h-70  bg-gray-100 border-x-2 border-gray-300 flex flex-col justify-center items-center overflow-hidden">
+                {
+                    post_image && 
+                    <img className="h-full w-full object-contain" src={`${SERVER_URL}${post_image}`} alt="Post Image" />
+                }
             </div>
-            <div className="w-full py-2 px-4 bg-gray-200 border-2 border-gray-300 flex justify-between rounded-b-2xl">
-                <div className="flex gap-2 items-center">
-                    <div className="cursor-pointer text-red-600">
-                        {
-                            clientLiked ?
-                            <FaHeart onClick={handleToggleLike} />
-                            :
-                            <FaRegHeart onClick={handleToggleLike} />
-                        }
-                    </div>
-                    <p>{clientLikeCount}</p>
+            <div className="w-full py-2 px-4 bg-gray-200 border-2 border-gray-300 flex flex-col justify-between rounded-b-2xl">
+                <div className="mb-2">
+                    <p className="text-lg">{description}</p>
                 </div>
-                <p>{formatted_date}</p>
+                <div className="flex justify-between">
+                    <div className="flex gap-2 items-center">
+                        <div className="cursor-pointer text-red-600">
+                            {
+                                clientLiked ?
+                                <FaHeart onClick={handleToggleLike} />
+                                :
+                                <FaRegHeart onClick={handleToggleLike} />
+                            }
+                        </div>
+                        <p>{clientLikeCount}</p>
+                    </div>
+                    <p>{formatted_date}</p>
+                </div>
             </div>
         </div>
         </>

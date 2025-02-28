@@ -39,7 +39,7 @@ function EditProfile() {
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2 w-full">
                         <label className="text-lg font-semibold">Profile Picture</label>
-                        <input onChange={(e) => setProfileImage(e.target.files[0])} type="file" className="bg-gray-200 rounded-sm p-2"/>
+                        <input onChange={(e) => setProfileImage(e.target.files[0])} accept="image/*" type="file" className="bg-gray-200 rounded-sm p-2"/>
                     </div>
                     <div className="flex flex-col gap-2 w-full">
                         <label className="text-lg font-semibold">Username</label>

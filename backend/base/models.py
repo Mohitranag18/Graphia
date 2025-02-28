@@ -24,6 +24,7 @@ class Post(models.Model):
     description = models.CharField(max_length=400)
     created_at =models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(MyUser, related_name='post_likes', blank=True)
+    post_image =models.ImageField(upload_to='post_images/')
 
 class Note(models.Model):
     description = models.CharField(max_length=300)

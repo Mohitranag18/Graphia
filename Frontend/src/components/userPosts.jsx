@@ -27,7 +27,7 @@ function UserPosts({username}) {
                 <p>Loading....</p>
             :
                 posts.map((post) => {
-                    return <Post key={post.id} id={post.id} username={post.username} description={post.description} formatted_date={post.formatted_date} liked={post.liked} like_count={post.like_count}></Post>
+                    return <Post key={post.id} id={post.id} username={post.username} description={post.description} formatted_date={post.formatted_date} post_image={post.post_image} liked={post.liked} like_count={post.like_count}></Post>
                 })
             }
         </div>
