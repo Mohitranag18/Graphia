@@ -94,7 +94,12 @@ export const request_password_reset = async (email) => {
     return response.data;
 };
 
+export const reset_password = async (username, token, new_password) => {
+    const response = await api.post(`resetPassword/${username}/${token}/`, {new_password: new_password});
+    return response.data;
+};
 
+// user profile data and posts data apis start
 export const get_user_profile_info = async (username) => {
     try{
         const response = await api.get(`user_data/${username}/`, { withCredentials: true });

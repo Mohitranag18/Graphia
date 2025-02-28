@@ -4,26 +4,26 @@ import { request_password_reset } from '../api/endpoints';
 
 
 function ForgotPassword() {
-    const [email, setEmail] = useState('')
-    const [message, setMessage] = useState('')
-    const [linkSended, setLinkSended] = useState(false)
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [linkSended, setLinkSended] = useState(false)
 
-    const nav = useNavigate();
+  const nav = useNavigate();
 
-    const handleNavigate = (route) => {
-        nav(`${route}`);
-    };
+  const handleNavigate = (route) => {
+      nav(`${route}`);
+  };
 
-    const requestResetPassword = async () => {
-      try {
-        const response = await request_password_reset(email); 
-        setMessage(response.success);
-        setLinkSended(true)
-      } catch (error) {
-        setMessage(error.response?.data?.error || "Error sending reset link"); 
-        setLinkSended(false)
-        console.error("Error in Sending Reset Link", error);
-      }
+  const requestResetPassword = async () => {
+    try {
+      const response = await request_password_reset(email); 
+      setMessage(response.success);
+      setLinkSended(true)
+    } catch (error) {
+      setMessage(error.response?.data?.error || "Error sending reset link"); 
+      setLinkSended(false)
+      console.error("Error in Sending Reset Link", error);
+    }
   };
 
   return (
