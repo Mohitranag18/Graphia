@@ -8,3 +8,12 @@
     display: none; /* Chrome, Safari, Opera */
   }
   
+  .custom-scrollbar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari, and Edge */
+  }
+  
+  .custom-scrollbar {
+    -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+    scrollbar-width: none;  /* Hide scrollbar for Firefox */
+  }
+  

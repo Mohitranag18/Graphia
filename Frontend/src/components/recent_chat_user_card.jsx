@@ -42,11 +42,11 @@ function RecentChatUserCard({username, group_name}) {
                     }
                 </div>
                 <div className="flex flex-col">
-                    <h3 onClick={(route) => handleNavigate(`/user/${username}`)}  className="font-semibold text-lg mt-0 cursor-pointer">{username}</h3>
+                    <h3 onClick={() => handleNavigate(`/user/${username}`)}  className="font-semibold text-lg mt-0 cursor-pointer hover:underline">{username}</h3>
                     <p>{bio}</p>
                 </div>
             </div>
-            <div onClick={(route) => handleNavigate(`/chat/${username}`)} className="w-14 bg-blue-200 p-2 text-2xl font-semibold rounded-sm flex items-center justify-center cursor-pointer hover:bg-gray-200"><PiChatTeardropDotsLight /></div>
+            <div onClick={() => handleNavigate(`/chat/${username}`)} className="w-14 bg-blue-200 p-2 text-2xl font-semibold rounded-sm flex items-center justify-center cursor-pointer hover:bg-gray-200"><PiChatTeardropDotsLight /></div>
         </div>
         </>
      );

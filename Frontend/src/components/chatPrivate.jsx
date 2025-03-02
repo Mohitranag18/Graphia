@@ -2,8 +2,16 @@ import useWebSocket from './useWebSocket';  // Import the WebSocket module
 import { useEffect, useState, useRef } from "react";
 import { get_private_messages, create_private_files_message } from "../api/endpoints";
 import {SERVER_URL} from '../api/endpoints'
+import { useNavigate } from "react-router-dom";
 
 const ChatRoomPrivate = () => {
+
+  const nav = useNavigate();
+
+    const handleNavigate = (route) => {
+        nav(`${route}`)
+    }
+
     const getUsernameFromUrl = () => {
         const urlSplit = window.location.pathname.split('/');
         return urlSplit[urlSplit.length - 1];
@@ -85,8 +93,8 @@ const ChatRoomPrivate = () => {
       <div className="flex flex-col items-center max-w-2xl mx-auto m-4 space-y-4 p-6 py-4 border border-gray-300 rounded-lg bg-white shadow-lg">
         {/* Header */}
         <div className='flex justify-between w-full'>
-          <p  className='text-md font-bold text-blue-500 hover:underline cursor-pointer'>
-            {group_name}
+          <p onClick={() => handleNavigate(`/user/${otherUser}`)}  className='text-md font-bold text-blue-500 hover:underline cursor-pointer'>
+            {otherUser}
           </p>
         </div>
 

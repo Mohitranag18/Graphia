@@ -44,7 +44,7 @@ function RecentChat() {
                 />
                 <div onClick={handleSearch} className='bg-gray-200 p-2 text-2xl rounded-sm cursor-pointer'><IoSearchSharp /></div>
             </div>
-            <div className='flex flex-col gap-4 border-2 border-gray-300 rounded-2xl p-6 h-96'>
+            <div className='flex flex-col gap-4 border-2 border-gray-300 rounded-2xl p-6 h-96 overflow-hidden overflow-y-auto custom-scrollbar'>
                 {
                     recentChats.map((chat)=>{
                         return <RecentChatUserCard username={chat.users.username} group_name={chat.group_name}/>
