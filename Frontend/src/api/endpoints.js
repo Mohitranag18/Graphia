@@ -142,6 +142,15 @@ export const get_posts = async (num) =>{
     }
 }
 
+export const get_post_byId = async (id) =>{
+    try{
+        const response = await api.get(`get_posts_byId/${id}`)
+        return response.data
+    }catch(error){
+        return call_refresh(error, () => api.get(`get_posts_byId/${id}`));
+    }
+}
+
 export const search_users = async (search) =>{
     const response = await api.get(`search/?query=${search}`)
     return response.data
@@ -242,3 +251,13 @@ export const create_private_files_message = async (chat, body, file) => {
         return call_refresh(error, () => api.post(`group/${chat}/private_messages/`,{ chat: chat, body: body, file: file}, {headers: {'Content-Type': "multipart/form-data",}, withCredentials: true}));
     }
 };
+
+
+export const get_comments = async (id) =>{
+    try{
+        const response = await api.get(`get_comment/${id}`)
+        return response.data
+    }catch(error){
+        return call_refresh(error, () => api.get(`get_comment/${id}`));
+    }
+}

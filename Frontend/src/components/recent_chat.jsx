@@ -34,7 +34,7 @@ function RecentChat() {
 
     return ( 
         <>
-        <div className='h-112 w-112'>
+        <div className='h-full w-full md:h-112 md:w-112'>
         <div className='flex flex-col gap-4'>
             <h2 className="text-2xl font-bold">Recent Chats</h2>
             <div className='flex items-center gap-2'>

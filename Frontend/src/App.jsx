@@ -19,6 +19,7 @@ import Groups from './routes/groups.jsx';
 import GroupInfo from './components/group_info.jsx';
 import ForgotPassword from './routes/forgot_password.jsx';
 import ResetPassword from './routes/reset_password.jsx';
+import PostDetails from './routes/post.jsx';
 
 function App() {
   return (
@@ -88,6 +89,13 @@ function App() {
               </PrivateRoute>
             }
             path="/edit/profile"
+          />
+          <Route element={
+              <PrivateRoute>
+                <PostDetails />
+              </PrivateRoute>
+            }
+            path="/post/:id"
           />
           <Route element={<Login />} path="/login" />
           <Route element={<Register />} path="/register" />

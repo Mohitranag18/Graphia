@@ -4,7 +4,7 @@ import RecentChat from "../components/recent_chat";
 function Groups() {
     return (  
         <>
-        <div className="flex justify-center h-screen mt-8 gap-24">
+        <div className="flex flex-col gap-8 md:gap-24 items-center lg:justify-center h-full lg:h-screen mt-8  lg:flex-row lg:gap-24">
             <AllGroups />
             <RecentChat />
         </div>

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import status
 from .models import MyUser
-from .models import Note, Post
-from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer, UserSerializer
+from .models import Note, Post, Comment
+from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer, UserSerializer, CommentSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -347,6 +347,28 @@ def get_posts(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def get_post_byId(request, post_id):
+    try:
+        my_user = MyUser.objects.get(username=request.user.username)
+    except MyUser.DoesNotExist:
+        return Response({'error':'user does not exist'})
+    
+    try:
+        post = Post.objects.get(id=post_id)
+        serializer = PostSerializer(post)
+        post_data = serializer.data
+
+        if my_user.username in post_data['likes']:
+            post_data['liked'] = True
+        else:
+            post_data['liked'] = False
+
+        return Response(post_data)
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=404)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def search_user(request):
     query = request.query_params.get('query', '')
     users = MyUser.objects.filter(username__icontains=query)
@@ -372,3 +394,30 @@ def update_user_details(request):
     return Response({**serializer.errors, "success":False})
 
 
+@api_view(['GET'])
+def get_comments(request, post_id):
+    comments = Comment.objects.filter(post_id=post_id)
+    serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request, post_id):
+    data = request.data
+    data['user'] = request.user.username
+    data['post'] = post_id
+    serializer = CommentSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_comment(request, comment_id):
+    try:
+        comment = Comment.objects.get(id=comment_id, user=request.user)
+        comment.delete()
+        return Response({'message': 'Comment deleted successfully'}, status=204)
+    except Comment.DoesNotExist:
+        return Response({'error': 'Comment not found or not authorized'}, status=404)

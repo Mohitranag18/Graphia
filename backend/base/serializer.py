@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Note
-from .models import MyUser, Post
+from .models import MyUser, Post, Comment
 
 
 class MyUserProfileSerializer(serializers.ModelSerializer):
@@ -47,6 +47,16 @@ class PostSerializer(serializers.ModelSerializer):
     
     def get_like_count(self, obj):
         return obj.likes.count()
+    
+    def get_formatted_date(self, obj):
+        return obj.created_at.strftime("%d %b %y")
+    
+class CommentSerializer(serializers.ModelSerializer):
+    formatted_date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'post', 'content', 'created_at', 'formatted_date']
     
     def get_formatted_date(self, obj):
         return obj.created_at.strftime("%d %b %y")

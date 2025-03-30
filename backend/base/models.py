@@ -26,6 +26,15 @@ class Post(models.Model):
     likes = models.ManyToManyField(MyUser, related_name='post_likes', blank=True)
     post_image =models.ImageField(upload_to='post_images/')
 
+class Comment(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} commented on {self.post.id}'
+
 class Note(models.Model):
     description = models.CharField(max_length=300)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='note')

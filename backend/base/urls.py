@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_user_profile_data, get_users_posts, toggleLike, create_post, get_posts, search_user, update_user_details, change_password, request_password_reset, reset_password
+from .views import get_notes, CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, register, toggleFollow, get_user_profile_data, get_users_posts, toggleLike, create_post, get_posts, get_post_byId, search_user, update_user_details, change_password, request_password_reset, reset_password, get_comments, create_comment, delete_comment
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -20,6 +20,10 @@ urlpatterns = [
     path('toggleLike/', toggleLike),
     path('create_post/', create_post),
     path('get_posts/', get_posts),
+    path('get_posts_byId/<post_id>/', get_post_byId),
     path('search/', search_user),
     path('update_user/', update_user_details),
+    path('get_comment/<post_id>/', get_comments),
+    path('create_comment/<post_id>/', create_comment),
+    path('delete_comment/<comment_id>/', delete_comment),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
