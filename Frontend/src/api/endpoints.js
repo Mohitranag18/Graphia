@@ -261,3 +261,12 @@ export const get_comments = async (id) =>{
         return call_refresh(error, () => api.get(`get_comment/${id}`));
     }
 }
+
+export const create_comment = async (content, id) => {
+    try{
+        const response = await api.post(`create_comment/${id}`,{ content }, { withCredentials: true});
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.post(`create_comment/${id}`,{ content }, { withCredentials: true}));
+    }
+};

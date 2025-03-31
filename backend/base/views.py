@@ -396,7 +396,7 @@ def update_user_details(request):
 
 @api_view(['GET'])
 def get_comments(request, post_id):
-    comments = Comment.objects.filter(post_id=post_id)
+    comments = Comment.objects.filter(post_id=post_id).order_by('-created_at')
     serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 

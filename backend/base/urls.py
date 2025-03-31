@@ -24,6 +24,6 @@ urlpatterns = [
     path('search/', search_user),
     path('update_user/', update_user_details),
     path('get_comment/<post_id>/', get_comments),
-    path('create_comment/<post_id>/', create_comment),
-    path('delete_comment/<comment_id>/', delete_comment),
+    path('create_comment/<post_id>', create_comment),
+    path('delete_comment/<comment_id>', delete_comment),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

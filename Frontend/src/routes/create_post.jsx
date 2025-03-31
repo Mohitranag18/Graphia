@@ -47,7 +47,7 @@ function CreatePost() {
                     />
                 </div>
                 <div className="flex flex-col gap-4 w-full">
-                    <label className="text-xl font-semibold">Description</label>
+                    <label className="text-xl font-semibold">Caption</label>
                     <input
                         onChange={(e) => setDescription(e.target.value)}
                         value={description}

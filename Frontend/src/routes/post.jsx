@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {SERVER_URL} from '../api/endpoints'
+import {SERVER_URL, create_comment} from '../api/endpoints'
 import { get_comments, get_post_byId } from "../api/endpoints";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +26,8 @@ function PostDetails() {
     const[likeCount, setLikeCount] = useState("")
 
     const [comments, setComments] = useState("")
+
+    const [content, setContent] = useState("")
 
     const getUsernameFromUrl = () => {
         const urlSplit = window.location.pathname.split('/');
@@ -65,6 +67,24 @@ function PostDetails() {
         fetchPostComments()
     },[])
 
+    const createComment = async () => {
+        try {
+            const data = await create_comment(content, postId)
+            console.log(data)
+            setComments((prev) => [{
+                  content: data.content,
+                  created_at: data.created_at,
+                  formatted_date: data.formatted_date,
+                  id: data.id,
+                  user: data.user,
+                  post: data.post,
+                }, ...prev]);
+        } catch (error) {
+            console.error("Error in adding comment:", error);
+        }finally{
+            setContent("")
+        }
+    };
 
     const handleToggleLike = async () =>{
         const data = await toggleLike(postId)
@@ -79,19 +99,19 @@ function PostDetails() {
 
   return (
     <>
-        <div className="min-h-screen flex flex-col justify-center items-center my-8 lg:gap-18 lg:flex-row">
+        <div className="min-h-screen flex flex-col gap-8 justify-center items-center my-8 md:gap-18 lg:flex-row">
             {/* left box */}
-            <div className="min-h-screen flex flex-col items-center lg:mt-8 gap-4">
-                <div className='h-full w-112 flex flex-col gap-4'>
-                    <div className="flex flex-col justify-evenly border-2 border-gray-300 rounded-2xl min-h-144 h-full">
-                        <div className="w-full h-full py-2 px-4 flex justify-between items-center">
+            <div className="flex flex-col items-center lg:mt-0 gap-4">
+                <div className='h-full w-88 flex flex-col gap-4'>
+                    <div className="flex flex-col border-2 border-gray-300 rounded-2xl max-h-160 h-160">
+                        <div className="w-full h-10 py-2 px-4 flex justify-between items-center">
                             <p onClick={(route) => handleNavigate(`/user/${username}`)} className="text-lg font-semibold cursor-pointer">{`@${username}`}</p>
                             <p>{formattedDate}</p>
                         </div>
 
-                        <div className="flex flex-col gap-4 h-120">
+                        <div className="flex flex-col gap-4 h-110">
                             <div className="w-full h-full">
-                                <div className="w-full h-120 flex flex-col justify-center items-center overflow-hidden border-y-2 border-gray-300">
+                                <div className="w-full h-110 flex flex-col justify-center items-center overflow-hidden border-y-2 border-gray-300">
                                     {
                                         postImage && 
                                         <img className="h-full w-full object-cover" src={`${SERVER_URL}${postImage}`} alt="Post Image" />
@@ -100,8 +120,8 @@ function PostDetails() {
                             </div>
                         </div>
 
-                        <div className="w-full h-full py-2 px-4 flex justify-center items-center">
-                            <div className="flex justify-between">
+                        <div className="w-full h-40 py-2 px-4 flex justify-center items-start">
+                            <div className="flex flex-col gap-1 items-center justify-between">
                                 <div className="flex gap-2 items-center">
                                     <div className="cursor-pointer text-red-600">
                                         {
@@ -113,6 +133,7 @@ function PostDetails() {
                                     </div>
                                     <p>{likeCount}</p>
                                 </div>
+                                <p className="text-md">{description}</p>
                             </div>
                         </div>
                     </div>
@@ -120,17 +141,16 @@ function PostDetails() {
             </div>
             
             {/* right box */}
-            <div className="min-h-screen flex flex-col items-center lg:mt-8 gap-4">
-                <div className='h-full w-112 flex flex-col gap-4'>
-                    <div className="flex flex-col border-2 border-gray-300 rounded-2xl p-6 min-h-144 h-144">
+            <div className="flex flex-col items-center lg:mt-0 gap-4">
+                <div className='h-full w-88 lg:w-112 flex flex-col gap-4'>
+                    <div className="flex flex-col border-2 border-gray-300 rounded-2xl p-6 min-h-160 h-160">
                         <div className="w-fullflex flex-col justify-between">
-                            <h1 className="text-lg font-bold w-full">Caption</h1>
-                            <div className="mb-2 flex justify-between overflow-hidden">
-                                <p className="text-lg">{description}</p>
-                            </div>
+                            <h1 className="mb-2 text-lg font-bold w-full">Add Comment</h1>
+                            <input value={content} onChange={(e)=>setContent(e.target.value)} className="mb-2 w-full bg-gray-200 rounded-lg p-2"></input>
+                            <button onClick={createComment} className="mb-2 w-full bg-blue-600 cursor-pointer rounded-sm p-2 text-white">Submit</button>
                         </div>
                         <h1 className="text-lg font-bold w-full mb-2">Comments</h1>
-                        <div className="flex flex-col gap-4 h-96 overflow-hidden overflow-y-auto custom-scrollbar">
+                        <div className="flex flex-col gap-4 h-112 overflow-hidden overflow-y-auto custom-scrollbar">
                         {
                             loadingComment ? (
                                 <p>Loading Comments</p>
