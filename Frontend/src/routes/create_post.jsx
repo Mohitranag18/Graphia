@@ -25,7 +25,7 @@ function CreatePost() {
                 setPostImage(null);
                 fileInputRef.current.value = ""; // Clear file input
             } else if (response.error) {
-                alert(JSON.stringify(response.error));;
+                alert(JSON.stringify(response.error));
             }
         } catch (error) {
             alert("Error in creating post");
@@ -33,8 +33,8 @@ function CreatePost() {
     };
 
     return (
-        <div className="h-screen flex justify-center">
-            <div className="h-112 w-112 flex flex-col gap-4 mt-8">
+        <div className="h-screen flex justify-center items-center px-4">
+            <div className="w-full max-w-lg flex flex-col gap-4">
                 <h2 className="text-2xl font-bold">Create Post</h2>
                 <div className="flex flex-col gap-2 w-full">
                     <label className="text-lg font-semibold">Post Image</label>
@@ -52,11 +52,11 @@ function CreatePost() {
                         onChange={(e) => setDescription(e.target.value)}
                         value={description}
                         type="text"
-                        className="bg-gray-100 rounded-sm p-2 w-full border-1 border-gray-300"
+                        className="bg-gray-100 rounded-sm p-2 w-full border border-gray-300"
                     />
                     <button
                         onClick={handlePost}
-                        className="bg-blue-500 text-lg text-white cursor-pointer rounded-sm p-2"
+                        className="bg-blue-500 text-lg text-white cursor-pointer rounded-sm p-2 w-full"
                     >
                         Post
                     </button>

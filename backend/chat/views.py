@@ -41,7 +41,7 @@ def fetch_private_messages(request, group_name):
         print(f"Private chat: {private_chat}")
 
         # Get the last 30 private messages (reverse order for latest)
-        messages = private_chat.private_messages.all().order_by('created')[:30]
+        messages = private_chat.private_messages.all().order_by('created')
         
         # Debugging: Print messages fetched
         print(f"Messages: {messages}")

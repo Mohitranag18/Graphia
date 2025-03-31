@@ -35,7 +35,19 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
 
       // Handle normal message events
       if(data.message && data.message.trim() !== '') {
-        console.log('Received message 2:');
+        console.log('Received message 2:'); 
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            message: data.message,
+            file: data.file,
+            author: data.author,
+            timestamp: data.timestamp,
+          }
+        ]);
+      }
+      if(data.message.trim() === '' && data.file !== null) {
+        console.log('Received message 3:'); 
         setMessages((prevMessages) => [
           ...prevMessages,
           {

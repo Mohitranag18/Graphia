@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import { get_private_messages, create_private_files_message } from "../api/endpoints";
 import {SERVER_URL} from '../api/endpoints'
 import { useNavigate } from "react-router-dom";
+import { FaRegImage } from 'react-icons/fa6';
+
 
 const ChatRoomPrivate = () => {
 
@@ -90,21 +92,21 @@ const ChatRoomPrivate = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center max-w-2xl mx-auto m-4 space-y-4 p-6 py-4 border border-gray-300 rounded-lg bg-white shadow-lg">
+      <div className="h-screen max-h-screen flex flex-col items-center max-w-2xl mx-auto space-y-4 p-6 py-4 bg-white">
         {/* Header */}
         <div className='flex justify-between w-full'>
-          <p onClick={() => handleNavigate(`/user/${otherUser}`)}  className='text-md font-bold text-blue-500 hover:underline cursor-pointer'>
+          <p onClick={() => handleNavigate(`/user/${otherUser}`)}  className='text-md font-bold text-black hover:underline cursor-pointer'>
             {otherUser}
           </p>
         </div>
 
         {/* Messages Container */}
-        <div className="w-full h-96 overflow-y-auto space-y-2 p-2 bg-gray-50 rounded-lg shadow-inner hide-scrollbar">
+        <div className="w-full h-[75%] md:h-[70%] overflow-y-auto space-y-2 p-2 bg-gray-50 rounded-lg shadow-inner hide-scrollbar">
           {/* Old Messages */}
           {oldMessages.map((message) => (
             username == message.sender ?(
-              <div key={message.id} className="flex items-start justify-end space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
-              <div className='bg-green-300 flex flex-col gap-1 p-4 rounded-xl'>
+              <div key={message.id} className="flex items-start justify-end space-x-2 p-3 rounded-lg">
+              <div className='bg-green-200 flex flex-col px-3 py-1 rounded-sm'>
                 {message.file && (
                   <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
                     <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
@@ -115,9 +117,9 @@ const ChatRoomPrivate = () => {
               {/* <strong className="text-sm text-blue-600">{message.sender}</strong> */}
               </div>)
               :
-              (<div key={message.id} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
-              <strong className="text-sm text-blue-600">{message.sender}</strong>
-              <div className='bg-red-300 flex flex-col gap-1 p-4 rounded-xl'>
+              (<div key={message.id} className="flex items-start space-x-2p-3 rounded-lg">
+              <strong className="text-sm mr-2 text-blue-600">{message.sender}</strong>
+              <div className='bg-gray-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                 {message.file && (
                   <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
                     <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
@@ -131,9 +133,9 @@ const ChatRoomPrivate = () => {
           {/* New Messages */}
           {messages.map((msg, index) => (
             username == msg.author ?(
-              <div key={index} className="flex items-start justify-end space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
+              <div key={index} className="flex items-start justify-end space-x-2p-3 rounded-lg">
                 {/* <strong className="text-sm text-blue-600">{msg.author}</strong> */}
-                <div className='bg-green-300 flex flex-col gap-1 p-4 rounded-xl'>
+                <div className='bg-green-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                   {msg.file && (
                     <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
                       <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
@@ -143,9 +145,9 @@ const ChatRoomPrivate = () => {
                 </div>
               </div>)
               :
-              (<div key={index} className="flex items-start space-x-2 bg-gray-100 p-3 rounded-lg shadow-sm">
+              (<div key={index} className="flex items-start space-x-2 p-3 rounded-lg">
                 <strong className="text-sm text-blue-600">{msg.author}</strong>
-                <div className='bg-red-300 flex flex-col gap-1 p-4 rounded-xl'>
+                <div className='bg-gray-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                   {msg.file && (
                     <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
                       <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
@@ -161,6 +163,10 @@ const ChatRoomPrivate = () => {
         </div>
 
         {/* Input Area */}
+        {
+          fileInputRef.current && 
+          <p className='m-0'>{fileInputRef.current.value}</p>
+        }
         <div className="w-full mt-4 flex items-center space-x-2">
           <input
             type="text"
@@ -169,15 +175,20 @@ const ChatRoomPrivate = () => {
             placeholder="Type a message..."
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input
-            type="file"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-            className="p-2 border border-gray-300 rounded-md"
-          />
+          <label className="relative inline-block cursor-pointer">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              ref={fileInputRef}
+              className="opacity-0 absolute w-8 h-8 cursor-pointer"
+            />
+            <FaRegImage className="text-3xl text-blue-500" />
+          </label>
+
           <button
             onClick={handleSend}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-2 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Send
           </button>
