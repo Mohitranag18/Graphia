@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('SECRET_KEY')
 
-ALLOWED_HOSTS = [config('REDIS_URL')] 
+ALLOWED_HOSTS = ['graphia-p735.onrender.com'] 
 
 AUTH_USER_MODEL = 'base.MyUser'
 
