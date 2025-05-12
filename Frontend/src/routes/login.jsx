@@ -17,9 +17,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-gray-700 mb-8">Login</h1>
+    <div className="flex items-start md:items-center justify-center min-h-screen bg-white">
+      <div className="w-full max-w-md bg-white p-8">
+        <h1 className="text-3xl font-bold text-gray-700 mb-8 text-center">Login</h1>
         <div className="mb-4">
           <label className="block text-gray-600 text-sm mb-2">Username</label>
           <input
@@ -46,19 +46,19 @@ const Login = () => {
         >
           Login
         </button>
-        <div className='flex justify-between'>
-        <p
-          onClick={(route)=> handleNavigate('/register')}
-          className="mt-4 text-sm text-gray-600 cursor-pointer hover:text-blue-500"
-        >
-          Don't have an account? Sign up
-        </p>
-        <p
-          onClick={(route)=> handleNavigate('/forgotPassword')}
-          className="mt-4 text-sm text-gray-600 cursor-pointer hover:text-blue-500"
-        >
-          Forgot Password?
-        </p>
+        <div className='flex flex-col md:flex-row justify-between'>
+          <p
+            onClick={() => handleNavigate('/register')}
+            className="mt-4 text-sm text-gray-600 cursor-pointer hover:text-blue-500"
+          >
+            Don't have an account? Sign up
+          </p>
+          <p
+            onClick={() => handleNavigate('/forgotPassword')}
+            className="mt-4 text-sm text-gray-600 cursor-pointer hover:text-blue-500"
+          >
+            Forgot Password?
+          </p>
         </div>
       </div>
     </div>
