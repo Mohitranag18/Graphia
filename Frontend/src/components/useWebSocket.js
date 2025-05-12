@@ -8,8 +8,8 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
   useEffect(() => {
     // Dynamically set WebSocket URL
     const wsUrl = isPrivateChat
-      ? `ws://127.0.0.1:8000/ws/private/${chatroomName}/`
-      : `ws://127.0.0.1:8000/ws/chatroom/${chatroomName}/`;
+      ? `wss://graphia-p735.onrender.com/ws/private/${chatroomName}/`
+      : `wss://graphia-p735.onrender.com/ws/chatroom/${chatroomName}/`;
 
     const ws = new WebSocket(wsUrl);
 
