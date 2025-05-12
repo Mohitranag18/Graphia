@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('SECRET_KEY')
 
-ALLOWED_HOSTS = ['graphia-p735.onrender.com', 'localhost', '127.0.0.1'] 
+ALLOWED_HOSTS = ['graphia-p735.onrender.com', 'localhost', '127.0.0.1', 'https://graphia-8q65.vercel.app'] 
 
 AUTH_USER_MODEL = 'base.MyUser'
 
@@ -171,7 +171,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
+    "https://graphia-8q65.vercel.app"
 ]
+
+# For Channels
+CSRF_TRUSTED_ORIGINS = ["https://graphia-8q65.vercel.app"]
 
 CORS_ALLOW_CREDENTIALS = True
 
