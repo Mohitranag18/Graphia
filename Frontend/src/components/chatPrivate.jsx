@@ -34,12 +34,23 @@ const ChatRoomPrivate = () => {
     const group_name = [username, otherUser].sort().join('_');
 
     useEffect(() => {
-        const fetchMessages = async () => {
-        const oldMessages = await get_private_messages(group_name);
-        setOldMessages(oldMessages);
-        };
-        fetchMessages();
+      const fetchMessages = async () => {
+        try {
+          const response = await get_private_messages(group_name);
+          if (Array.isArray(response)) {
+            setOldMessages(response);
+          } else {
+            console.error("Expected an array but got:", response);
+            setOldMessages([]); // Set to empty array to prevent .map error
+          }
+        } catch (err) {
+          console.error("Failed to fetch messages:", err);
+          setOldMessages([]); // Set fallback in case of error
+        }
+      };
+      fetchMessages();
     }, [group_name]);
+    
 
     // Scroll to the bottom of the messages container
     useEffect(() => {
@@ -108,8 +119,8 @@ const ChatRoomPrivate = () => {
               <div key={message.id} className="flex items-start justify-end space-x-2 p-3 rounded-lg">
               <div className='bg-green-200 flex flex-col px-3 py-1 rounded-sm'>
                 {message.file && (
-                  <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
+                  <a href={message.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    <img src={message.file} alt="file" className='w-30 h-full rounded-lg'/>
                   </a>
                 )}
                 <p className="text-gray-800 text-sm">{message.body}</p>
@@ -121,8 +132,8 @@ const ChatRoomPrivate = () => {
               <strong className="text-sm mr-2 text-blue-600">{message.sender}</strong>
               <div className='bg-gray-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                 {message.file && (
-                  <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
+                  <a href={message.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    <img src={message.file} alt="file" className='w-30 h-full rounded-lg'/>
                   </a>
                 )}
                 <p className="text-gray-800 text-sm">{message.body}</p>
@@ -137,8 +148,8 @@ const ChatRoomPrivate = () => {
                 {/* <strong className="text-sm text-blue-600">{msg.author}</strong> */}
                 <div className='bg-green-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                   {msg.file && (
-                    <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                      <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                    <a href={msg.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      <img src={msg.file} alt="file" className='w-30 h-auto rounded-lg'/>
                     </a>
                   )}
                   <p className="text-gray-800 text-sm">{msg.message}</p>
@@ -149,8 +160,8 @@ const ChatRoomPrivate = () => {
                 <strong className="text-sm text-blue-600">{msg.author}</strong>
                 <div className='bg-gray-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                   {msg.file && (
-                    <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                      <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                    <a href={msg.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      <img src={msg.file} alt="file" className='w-30 h-auto rounded-lg'/>
                     </a>
                   )}
                   <p className="text-gray-800 text-sm">{msg.message}</p>

@@ -16,7 +16,7 @@ function SearchUserInfo({username, profile_image, first_name, last_name}) {
             <div>
                 {
                     profile_image ?
-                    <img src={`${SERVER_URL}${profile_image}`} alt="DP" className='h-12 w-12 object-cover object-top rounded-full border-2 border-gray-400' />
+                    <img src={profile_image} alt="DP" className='h-12 w-12 object-cover object-top rounded-full border-2 border-gray-400' />
                     :
                     <img src={BlankImage} className='h-12 w-12 object-cover rounded-full border-2 border-gray-400'/>
                 }

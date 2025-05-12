@@ -37,19 +37,24 @@ class PostSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
     formatted_date = serializers.SerializerMethodField()
+    post_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = ['id', 'username', 'description', 'formatted_date', 'likes', 'post_image', 'like_count']
-    
+
     def get_username(self, obj):
         return obj.user.username
-    
+
     def get_like_count(self, obj):
         return obj.likes.count()
-    
+
     def get_formatted_date(self, obj):
         return obj.created_at.strftime("%d %b %y")
+
+    def get_post_image(self, obj):
+        return obj.post_image_url
+
     
 class CommentSerializer(serializers.ModelSerializer):
     formatted_date = serializers.SerializerMethodField()

@@ -91,7 +91,7 @@ const ChatRoom = () => {
       <div className="h-screen max-h-screen flex flex-col items-center max-w-2xl mx-auto space-y-4 p-6 py-4 bg-white">
         {/* Header */}
         <div className='flex justify-between w-full'>
-          <p className='text-sm'>Online Users: {onlineUsersCount}</p>
+          {/* <p className='text-sm'>Online Users: {onlineUsersCount}</p> */}
           <p onClick={() => handleNavigate(`/chatroom/${groupName}/info`)} className='text-md font-bold text-black hover:underline cursor-pointer'>
             {groupName}
           </p>
@@ -104,8 +104,8 @@ const ChatRoom = () => {
               <div key={message.id} className="flex items-start justify-end space-x-2p-3 rounded-lg">
               <div className='bg-green-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                 {message.file && (
-                  <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
+                  <a href={message.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    <img src={message.file} alt="file" className='w-30 h-full rounded-lg'/>
                   </a>
                 )}
                 <p className="text-gray-800 text-sm">{message.body}</p>
@@ -117,8 +117,8 @@ const ChatRoom = () => {
               <strong className="text-sm mr-2 text-blue-600">{message.author}</strong>
               <div className='bg-gray-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                 {message.file && (
-                  <a href={`${SERVER_URL}${message.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                    <img src={`${SERVER_URL}${message.file}`} alt="file" className='w-30 h-full rounded-lg'/>
+                  <a href={message.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    <img src={message.file} alt="file" className='w-30 h-full rounded-lg'/>
                   </a>
                 )}
                 <p className="text-gray-800 text-sm">{message.body}</p>
@@ -132,8 +132,8 @@ const ChatRoom = () => {
                 {/* <strong className="text-sm text-blue-600">{msg.author}</strong> */}
                 <div className='bg-green-200 flex flex-col gap-1 p-4 px-3 py-1 rounded-sm'>
                   {msg.file && (
-                    <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                      <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                    <a href={msg.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      <img src={msg.file} alt="file" className='w-30 h-auto rounded-lg'/>
                     </a>
                   )}
                   <p className="text-gray-800 text-sm">{msg.message}</p>
@@ -144,8 +144,8 @@ const ChatRoom = () => {
                 <strong className="text-sm text-blue-600">{msg.author}</strong>
                 <div className='bg-gray-200 flex flex-col gap-1 px-3 py-1 rounded-sm'>
                   {msg.file && (
-                    <a href={`${SERVER_URL}${msg.file}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                      <img src={`${SERVER_URL}${msg.file}`} alt="file" className='w-30 h-auto rounded-lg'/>
+                    <a href={msg.file} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      <img src={msg.file} alt="file" className='w-30 h-auto rounded-lg'/>
                     </a>
                   )}
                   <p className="text-gray-800 text-sm">{msg.message}</p>

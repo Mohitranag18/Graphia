@@ -8,6 +8,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Q
 from django.db import models
+from uuid import uuid4
+from .utils.supabase_client import supabase
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -138,19 +140,37 @@ def get_recent_private_chats(request):
 @permission_classes([IsAuthenticated])
 def create_files_message(request, slug):
     """
-    Create a new message for a specific group. Supports both text messages and file uploads.
+    Create a new group message with optional file upload stored in Supabase.
     """
     group = get_object_or_404(ChatGroup, slug=slug)
 
-    # Attach the authenticated user as the author
     data = request.data.copy()
     data['author'] = request.user.username
     data['group'] = group.slug
 
-    # Serialize and validate the data
+    # Handle file upload to Supabase
+    file_obj = request.FILES.get('file')
+    if file_obj:
+        ext = file_obj.name.split('.')[-1]
+        filename = f'{uuid4()}.{ext}'
+
+        upload_response = supabase.storage.from_('group-files').upload(
+            filename,
+            file_obj.read(),
+            {
+                "content-type": file_obj.content_type
+            }
+        )
+
+        if not upload_response or not hasattr(upload_response, "path"):
+            return Response({"error": "Failed to upload file to Supabase"}, status=500)
+
+        file_url = supabase.storage.from_('group-files').get_public_url(upload_response.path)
+        data['file'] = file_url
+
+    # Validate and save message
     serializer = GroupMessageSerializer(data=data)
     if serializer.is_valid():
-        # Save the message (text or file) to the database
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -158,26 +178,41 @@ def create_files_message(request, slug):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Only authenticated users can send messages
+@permission_classes([IsAuthenticated])
 def create_private_files_message(request, group_name):
-    """
-    Create a new private message in an existing chat.
-    """
-    user = request.user  # Get the authenticated user
-    chat = get_object_or_404(PrivateChat, group_name=group_name)  # Fetch the chat
+    user = request.user
+    chat = get_object_or_404(PrivateChat, group_name=group_name)
 
-    # Check if the authenticated user is part of the chat
     if user not in [chat.user1, chat.user2]:
         return Response({'error': 'You are not a participant in this chat.'}, status=status.HTTP_403_FORBIDDEN)
 
-    # Extract message data from the request
     data = request.data.copy()
-    data['chat'] = chat.group_name  
-    data['sender'] = user.username  
+    data['chat'] = chat.group_name
+    data['sender'] = user.username 
+
+    # Handle file upload to Supabase
+    file_obj = request.FILES.get('file')
+    if file_obj:
+        ext = file_obj.name.split('.')[-1]
+        filename = f'{uuid4()}.{ext}'
+
+        upload_response = supabase.storage.from_('private-files').upload(
+            filename,
+            file_obj.read(),  # Read as bytes
+            {
+                "content-type": file_obj.content_type
+            }
+        )
+
+        if not upload_response or not hasattr(upload_response, "path"):
+            return Response({"error": "Failed to upload file"}, status=500)
+
+        file_url = supabase.storage.from_('private-files').get_public_url(upload_response.path)
+        data['file'] = file_url
 
     serializer = PrivateMessageSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

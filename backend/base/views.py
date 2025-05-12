@@ -6,6 +6,10 @@ from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfil
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from .models import Post
+from .utils.supabase_client import supabase
+import uuid
+from uuid import uuid4
 
 # Import the custom user model
 MyUser = get_user_model()
@@ -295,26 +299,47 @@ def toggleLike(request):
             return Response({'now_liked':True})
     except:
         return Response({"error":"faild to like post"})
-    
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_post(request):
     try:
-        user = request.user  # Get authenticated user
-
-        # Use request.FILES for image uploads
-        post_image = request.FILES.get("post_image")
+        user = request.user
         description = request.data.get("description")
+        post_image = request.FILES.get("post_image")
 
         if not description:
             return Response({"error": "Description is required."}, status=400)
 
-        # Create post instance and save
-        post = Post.objects.create(user=user, description=description, post_image=post_image)
+        image_url = None
+        if post_image:
+            ext = post_image.name.split('.')[-1]
+            filename = f'{uuid4()}.{ext}'
+
+            # Upload to Supabase
+            file_bytes = post_image.read()
+            upload_response = supabase.storage.from_('post-images').upload(
+                filename, 
+                file_bytes,
+                {
+                    "content-type": post_image.content_type
+                }
+            )
+
+            if not upload_response or not hasattr(upload_response, "path"):
+                return Response({"error": "Failed to upload image"}, status=500)
+
+            # Get public URL
+            image_url = supabase.storage.from_('post-images').get_public_url(upload_response.path)
+
+        # Save post
+        post = Post.objects.create(user=user, description=description, post_image_url=image_url)
         return Response({"success": True, "post_id": post.id})
 
     except Exception as e:
+        print(str(e))
         return Response({"error": str(e)}, status=500)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -375,23 +400,46 @@ def search_user(request):
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
+from uuid import uuid4
+from rest_framework.parsers import MultiPartParser
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def update_user_details(request):
-
-    data = request.data
-
     try:
         user = MyUser.objects.get(username=request.user.username)
     except MyUser.DoesNotExist:
-        return Response({'error':'user does not exist'})
-    
-    serializer = UserSerializer(user, data, partial=True)
+        return Response({'error': 'User does not exist'}, status=404)
+
+    data = request.data.copy()  # Make it mutable
+    profile_image_file = request.FILES.get('profile_image')
+
+    if profile_image_file:
+        ext = profile_image_file.name.split('.')[-1]
+        filename = f'{uuid4()}.{ext}'
+
+        profile_image_file.seek(0)
+        upload_response = supabase.storage.from_('profile-images').upload(
+            filename,
+            profile_image_file.read(),
+            {
+                "content-type": profile_image_file.content_type
+            }
+        )
+
+        if not upload_response or not hasattr(upload_response, "path"):
+            return Response({"error": "Failed to upload profile image"}, status=500)
+
+        image_url = supabase.storage.from_('profile-images').get_public_url(upload_response.path)
+        data['profile_image'] = image_url
+
+    serializer = MyUserProfileSerializer(user, data=data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
-        return Response({**serializer.data, "success":True})
-    return Response({**serializer.errors, "success":False})
+        return Response({**serializer.data, "success": True})
+    
+    return Response({**serializer.errors, "success": False}, status=400)
 
 
 @api_view(['GET'])

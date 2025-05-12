@@ -60,7 +60,7 @@ function UserProfile() {
                 </div>
                 <div className="flex flex-col md:flex-row gap-8 w-full">
                     <div className="rounded-full border-2 border-black w-32 h-32 overflow-hidden">
-                        <img src={profileImage ? `${SERVER_URL}${profileImage}` : BlankImage} alt="Profile Pic" className="object-cover w-full h-full" />
+                        <img src={profileImage ? `${profileImage}` : BlankImage} alt="Profile Pic" className="object-cover w-full h-full" />
                     </div>
                     <div className="flex flex-col justify-around items-center w-full md:w-lg">
                         <div className="flex justify-evenly w-full">

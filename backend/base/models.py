@@ -4,8 +4,8 @@ from django.conf import settings
 
 class MyUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True, primary_key=True)
-    bio = models.CharField(max_length=500)
-    profile_image =models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    bio = models.CharField(max_length=500, blank=True, null=True)
+    profile_image = models.URLField(blank=True, null=True)
     follower = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
 
     def follower_count(self):
@@ -22,9 +22,9 @@ class MyUser(AbstractUser):
 class Post(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='posts')
     description = models.CharField(max_length=400)
-    created_at =models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(MyUser, related_name='post_likes', blank=True)
-    post_image =models.ImageField(upload_to='post_images/')
+    post_image_url = models.URLField(blank=True, null=True)
 
 class Comment(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='comments')

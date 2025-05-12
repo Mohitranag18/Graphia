@@ -36,7 +36,7 @@ function RecentChatUserCard({username, group_name}) {
                 <div>
                     {
                         profileImage ?
-                        <img src={`${SERVER_URL}${profileImage}`} alt="DP" className='h-12 w-12 object-cover object-top rounded-full border-2 border-gray-400' />
+                        <img src={profileImage} alt="DP" className='h-12 w-12 object-cover object-top rounded-full border-2 border-gray-400' />
                         :
                         <img src={BlankImage} className='h-12 w-12 object-cover rounded-full border-2 border-gray-400'/>
                     }

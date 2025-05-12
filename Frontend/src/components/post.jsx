@@ -39,7 +39,7 @@ function Post({id, username, description, formatted_date, post_image, liked, lik
             <div className="w-full h-70 bg-gray-100 border-x-2 border-gray-300 flex flex-col justify-center items-center overflow-hidden">
                 {
                     post_image && 
-                    <img className="h-full w-full object-cover" src={`${SERVER_URL}${post_image}`} alt="Post Image" />
+                    <img className="h-full w-full object-cover" src={post_image} alt="Post Image" />
                 }
             </div>
             <div className="w-full py-2 px-4 bg-gray-200 border-2 border-gray-300 flex flex-col justify-between rounded-b-2xl">

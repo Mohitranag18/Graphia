@@ -114,7 +114,7 @@ function PostDetails() {
                                 <div className="w-full h-110 flex flex-col justify-center items-center overflow-hidden border-y-2 border-gray-300">
                                     {
                                         postImage && 
-                                        <img className="h-full w-full object-cover" src={`${SERVER_URL}${postImage}`} alt="Post Image" />
+                                        <img className="h-full w-full object-cover" src={postImage} alt="Post Image" />
                                     }
                                 </div>
                             </div>
