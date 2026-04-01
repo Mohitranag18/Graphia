@@ -17,7 +17,10 @@ function CreateGroup() {
       setGroupName('');
       setDescription('');
     } catch (error) {
-      setMessage('Failed to create group. Please try again.');
+      const errorMsg = error.response?.data?.group_name?.[0]
+        || error.response?.data?.error
+        || 'Failed to create group. Please try again.';
+      setMessage(errorMsg);
       console.error(error);
     }
   };

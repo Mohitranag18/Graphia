@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../context/useAuth';
 import { useNavigate } from 'react-router-dom';
+import Loader from './Loader';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -14,11 +15,7 @@ const PrivateRoute = ({ children }) => {
   }, [loading, user, navigate]);
 
   if (loading) {
-    return (
-        <div className='w-full h-full flex justify-center items-center'>
-          <h1 className="text-2xl font-semibold">Loading...</h1>
-        </div>
-    );
+    return <Loader size="full" />;
   }
 
   if (user) {

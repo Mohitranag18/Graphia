@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { IoSearchSharp } from "react-icons/io5";
 import { get_recent_private_chats } from "../api/endpoints";
 import RecentChatUserCard from './recent_chat_user_card';
+import { useToast } from '../context/ToastContext';
 
 function RecentChat() {
-
+    const { showToast } = useToast()
     const [recentChats, setRecentChat] = useState([])
     const [loading, setLoading] = useState(true)
     const [query, setQuery] = useState('')
@@ -15,7 +16,7 @@ function RecentChat() {
                 const data = await get_recent_private_chats(query)
                 setRecentChat(data)
             }catch{
-                alert('error getting recent chat list')
+                showToast('Failed to load recent chats.', 'error')
             } finally{
                 setLoading(false)
             }
@@ -28,7 +29,7 @@ function RecentChat() {
             const data = await get_recent_private_chats(query)
             setRecentChat(data)
         }catch{
-            alert('error getting recent chat list 2')
+            showToast('Search failed. Please try again.', 'error')
         }
     }
 

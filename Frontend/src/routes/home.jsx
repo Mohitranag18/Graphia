@@ -1,12 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import { get_posts } from "../api/endpoints";
 import Post from "../components/post";
+import { useToast } from "../context/ToastContext";
+import Loader from "../components/Loader";
 
 function Home() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [nextPage, setNextPage] = useState(1);
-    const fetched = useRef(false); 
+    const fetched = useRef(false);
+    const { showToast } = useToast();
 
     const fetchData = async () => {
         try {
@@ -14,7 +17,7 @@ function Home() {
             setPosts((prevPosts) => [...prevPosts, ...data.results]);
             setNextPage(data.next ? nextPage + 1 : null);
         } catch {
-            alert("Error getting posts");
+            showToast("Failed to load posts. Please try again.", "error");
         }
     };
 
@@ -44,7 +47,7 @@ function Home() {
         <>
             <div className="min-h-screen flex flex-col justify-center items-center gap-4 my-8">
                 {loading ? (
-                    <p>Loading....</p>
+                    <Loader />
                 ) : posts.length > 0 ? (
                     posts.map((post) => (
                         <Post

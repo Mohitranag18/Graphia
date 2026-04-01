@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import { ToastProvider } from './context/ToastContext.jsx';
 import { AuthProvider } from './context/useAuth.jsx';
 import Header from './components/header.jsx';
 import Footer from './components/footer.jsx'
@@ -24,6 +25,7 @@ import PostDetails from './routes/post.jsx';
 function App() {
   return (
     <Router>
+      <ToastProvider>
       <AuthProvider>
         <Header />
         <Routes>
@@ -103,6 +105,7 @@ function App() {
           <Route element={<ResetPassword />} path="/resetPassword/:username/:token" />
         </Routes>
       </AuthProvider>
+      </ToastProvider>
     </Router>
   );
 }

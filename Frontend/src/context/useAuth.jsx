@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authenticated_user, login, logout, register } from '../api/endpoints';
+import { useToast } from './ToastContext';
+import Loader from '../components/Loader';
 
 const AuthContext = createContext();
 
@@ -8,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
+  const { showToast } = useToast();
 
   const get_authenticated_user = async () => {
     try {
@@ -34,7 +37,7 @@ export const AuthProvider = ({ children }) => {
       }
       localStorage.setItem('userData', JSON.stringify(userData))
     } else {
-      alert('Incorrect username or password');
+      showToast(user.error || 'Incorrect username or password', 'error');
     }
   };
 
@@ -47,14 +50,25 @@ export const AuthProvider = ({ children }) => {
   const registerUser = async (username, email, password, confirm_password) => {
     try {
       if (password === confirm_password) {
-        await register(username, email, password);
-        alert('User successfully registered');
-        nav('/login');
+        const response = await register(username, email, password);
+        if (response.username) {
+          showToast('Account created successfully! Please log in.', 'success');
+          nav('/login');
+        } else {
+          // Backend returned validation errors
+          const errorMsg = response.username?.[0] || response.email?.[0] || response.password?.[0] || 'Registration failed. Please check your details.';
+          showToast(errorMsg, 'error');
+        }
       } else {
-        alert('Passwords do not match');
+        showToast('Passwords do not match', 'error');
       }
-    } catch {
-      alert('Error registering user');
+    } catch (error) {
+      const message = error.response?.data?.username?.[0]
+        || error.response?.data?.email?.[0]
+        || error.response?.data?.password?.[0]
+        || error.response?.data?.detail
+        || 'Error registering user. Please try again.';
+      showToast(message, 'error');
     }
   };
 
@@ -62,7 +76,7 @@ export const AuthProvider = ({ children }) => {
     get_authenticated_user();
   }, []);
 
-  if (loading) return <div>Loading...</div>; // Optional loading screen
+  if (loading) return <Loader size="full" />;
 
   return (
     <AuthContext.Provider value={{ user, loading, loginUser, logoutUser, registerUser }}>

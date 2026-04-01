@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import {SERVER_URL, create_comment} from '../api/endpoints'
 import { get_comments, get_post_byId } from "../api/endpoints";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
+import Loader from "../components/Loader";
 
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
@@ -9,6 +11,7 @@ import { toggleLike } from "../api/endpoints";
 
 function PostDetails() {
     const nav = useNavigate();
+    const { showToast } = useToast();
 
     const handleNavigate = (route) => {
         nav(`${route}`)
@@ -47,6 +50,7 @@ function PostDetails() {
             setLiked(data.liked)
         } catch (error) {
             console.error("Error in fetching post's data:", error);
+            showToast("Failed to load post.", "error");
         } finally{
             setLoading(false);
         }
@@ -81,6 +85,7 @@ function PostDetails() {
                 }, ...prev]);
         } catch (error) {
             console.error("Error in adding comment:", error);
+            showToast("Failed to add comment.", "error");
         }finally{
             setContent("")
         }
@@ -153,7 +158,7 @@ function PostDetails() {
                         <div className="flex flex-col gap-4 h-112 overflow-hidden overflow-y-auto custom-scrollbar">
                         {
                             loadingComment ? (
-                                <p>Loading Comments</p>
+                                <Loader />
                             ): !loadingComment && comments.length > 0 ? (
                             comments.map((comment) => (
                                 <div key={comment.id} className="bg-gray-200 rounded-xl p-2 px-4">

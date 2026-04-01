@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/useAuth";
 import { update_user } from "../api/endpoints";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 function EditProfile() {
     const nav = useNavigate();
+    const { showToast } = useToast();
 
     const { user, logoutUser } = useAuth();
     const storage = JSON.parse(localStorage.getItem('userData'))
@@ -20,10 +22,10 @@ function EditProfile() {
         try{
             await update_user({"username":username, "profile_image":profileImage, "email":email, "bio":bio, "first_name":firstName, "last_name":lastName})
             localStorage.setItem("userData", JSON.stringify({"username":username, "email":email, "bio":bio, "first_name":firstName, "last_name":lastName}))
-            alert("successfully updated details")
+            showToast("Profile updated successfully!", "success")
             nav(`/user/${username}`)
         } catch{
-            alert("error updating details")
+            showToast("Failed to update profile. Please try again.", "error")
         }
     }
 

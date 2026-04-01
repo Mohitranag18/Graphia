@@ -5,6 +5,8 @@ import { IoSearchSharp } from "react-icons/io5";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
 import CreateGroup from './create_group';
+import { useToast } from '../context/ToastContext';
+import Loader from './Loader';
 
 
 function AllGroups() {
@@ -12,6 +14,7 @@ function AllGroups() {
     const [allGroups, setAllGroups] = useState([])
     const [loading, setLoading] = useState(true)
     const [isCreate, setIsCreate] = useState(false)
+    const { showToast } = useToast()
 
     useEffect(() => {
         const fetchAllGroups = async () => {
@@ -20,7 +23,7 @@ function AllGroups() {
                 setAllGroups(groups)
                 console.log(groups)
             }catch{
-                alert('error getting groups list')
+                showToast('Failed to load groups.', 'error')
             } finally{
                 setLoading(false)
             }
@@ -34,7 +37,7 @@ function AllGroups() {
             const groups = await get_all_groups(query)
             setAllGroups(groups)
         }catch{
-            alert('error getting groups list')
+            showToast('Search failed. Please try again.', 'error')
         }
     }
 
@@ -70,7 +73,7 @@ function AllGroups() {
                 :
                     
                     loading ?
-                    <p>Loading....</p>
+                    <Loader />
                     :
                     allGroups.map((group)=>{
                         return <GroupCard id={group.id} group_name={group.group_name} slug={group.slug} description={group.description} />

@@ -8,8 +8,8 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
   useEffect(() => {
     // Dynamically set WebSocket URL
     const wsUrl = isPrivateChat
-      ? `wss://graphia-p735.onrender.com/ws/private/${chatroomName}/`
-      : `wss://graphia-p735.onrender.com/ws/chatroom/${chatroomName}/`;
+      ? `wss://http://127.0.0.1:8000/ws/private/${chatroomName}/`
+      : `wss://http://127.0.0.1:8000/ws/chatroom/${chatroomName}/`;
 
     const ws = new WebSocket(wsUrl);
 
@@ -34,8 +34,8 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
       }
 
       // Handle normal message events
-      if(data.message && data.message.trim() !== '') {
-        console.log('Received message 2:'); 
+      if (data.message && data.message.trim() !== '') {
+        console.log('Received message 2:');
         setMessages((prevMessages) => [
           ...prevMessages,
           {
@@ -46,8 +46,8 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
           }
         ]);
       }
-      if(data.message.trim() === '' && data.file !== null) {
-        console.log('Received message 3:'); 
+      if (data.message.trim() === '' && data.file !== null) {
+        console.log('Received message 3:');
         setMessages((prevMessages) => [
           ...prevMessages,
           {
@@ -73,7 +73,7 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
 
   const sendMessage = (message, file, username) => {
     if (!message.trim() && !file) return; // Prevent sending empty messages
-  
+
     if (socket) {
       const messageData = {
         body: message.trim(),
@@ -84,7 +84,7 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
       socket.send(JSON.stringify(messageData));
     }
   };
-  
+
 
   return { messages, sendMessage, onlineUsersCount };
 };

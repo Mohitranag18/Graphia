@@ -1,14 +1,16 @@
 import { useState, useRef } from "react";
 import { create_post } from "../api/endpoints";
+import { useToast } from "../context/ToastContext";
 
 function CreatePost() {
     const [description, setDescription] = useState('');
     const [postImage, setPostImage] = useState(null);
     const fileInputRef = useRef(null);
+    const { showToast } = useToast();
 
     const handlePost = async () => {
         if (!description || !postImage) {
-            alert("Please add a description and an image.");
+            showToast("Please add a description and an image.", "error");
             return;
         }
 
@@ -20,15 +22,15 @@ function CreatePost() {
             const response = await create_post(formData); 
 
             if (response.success) {
-                alert('Post created successfully');
+                showToast('Post created successfully', 'success');
                 setDescription('');
                 setPostImage(null);
                 fileInputRef.current.value = ""; // Clear file input
             } else if (response.error) {
-                alert(JSON.stringify(response.error));
+                showToast(response.error, 'error');
             }
         } catch (error) {
-            alert("Error in creating post");
+            showToast("Error creating post. Please try again.", "error");
         }
     };
 

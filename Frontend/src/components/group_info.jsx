@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { get_group_details, join_group, leave_group } from "../api/endpoints";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 function GroupInfo() {
   const nav = useNavigate();
@@ -8,6 +9,7 @@ function GroupInfo() {
 
   const storage = JSON.parse(localStorage.getItem("userData"));
   const [username, setUsername] = useState(storage ? storage.username : "");
+  const { showToast } = useToast();
 
   const getGroupNameFromUrl = () => {
     const urlSplit = window.location.pathname.split("/");
@@ -26,6 +28,7 @@ function GroupInfo() {
         setMembers(data.users_online);
       } catch (error) {
         console.error("Failed to fetch group details:", error);
+        showToast("Failed to load group details.", "error");
       }
     };
     fetchGroupDetails();
@@ -39,6 +42,7 @@ function GroupInfo() {
       setMembers((prev) => [...prev, username]);
     } catch (error) {
       console.error("Failed to join group:", error);
+      showToast("Failed to join group.", "error");
     }
   };
 
@@ -48,6 +52,7 @@ function GroupInfo() {
       setMembers((prev) => prev.filter((user) => user !== username));
     } catch (error) {
       console.error("Failed to leave group:", error);
+      showToast("Failed to leave group.", "error");
     }
   };
 
