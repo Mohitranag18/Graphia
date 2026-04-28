@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000/api/'
-export const SERVER_URL = 'http://127.0.0.1:8000'
+const BASE_URL = `${import.meta.env.VITE_BASE_URL || 'http://127.0.0.1:8000'}/api/`
+export const SERVER_URL = import.meta.env.VITE_BASE_URL || 'http://127.0.0.1:8000'
 const LOGIN_URL = `${BASE_URL}token/`
 const REFRESH_URL = `${BASE_URL}token/refresh/`
 const NOTES_URL = `${BASE_URL}notes/`
