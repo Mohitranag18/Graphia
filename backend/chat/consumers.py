@@ -6,6 +6,8 @@ import jwt  # You need to install pyjwt library
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from .models import ChatGroup, GroupMessage, PrivateMessage, PrivateChat
+from .utils.encryption import encrypt_message
+from base.utils.notifications import create_notification
 
 User = get_user_model()
 
@@ -21,6 +23,7 @@ class ChatroomConsumer(WebsocketConsumer):
         if not cookie or not self.authenticate_user(cookie):
             print("Authentication failed.")
             self.close()  # Close connection if authentication fails
+            return
         
         self.user = self.scope['user']
         self.chatroom_name = self.scope['url_route']['kwargs']['chatroom_name']
@@ -36,9 +39,10 @@ class ChatroomConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.chatroom_name, self.channel_name
-        )
+        if hasattr(self, 'chatroom_name'):
+            async_to_sync(self.channel_layer.group_discard)(
+                self.chatroom_name, self.channel_name
+            )
 
     def receive(self, text_data):
         print("Received message in backend: ", text_data)  # Debugging line
@@ -66,7 +70,7 @@ class ChatroomConsumer(WebsocketConsumer):
 
             if not file_url:  # If no file, save the message in the database
                 message = GroupMessage.objects.create(
-                    body=body,
+                    body=encrypt_message(body),
                     author=self.user,
                     group=self.chatroom
                 )
@@ -137,30 +141,46 @@ class PrivateChatConsumer(WebsocketConsumer):
         cookie = self.scope.get('cookies', {}).get('access_token', None)
         print(f"Received token: {cookie}")
 
-
         # Authenticate the user using the cookie (JWT)
         if not cookie or not self.authenticate_user(cookie):
             print("Authentication failed.")
             self.close()  # Close connection if authentication fails
+            return
         
         self.user = self.scope['user']
         self.other_user_username = self.scope["url_route"]["kwargs"]["other_username"]
-        self.other_user = get_object_or_404(User, username=self.other_user_username)
+        
+        print(f"DEBUG: Authenticated user: {self.user.username}, other: {self.other_user_username}")
+        
+        try:
+            self.other_user = get_object_or_404(User, username=self.other_user_username)
+            print(f"DEBUG: Found other_user: {self.other_user.username}")
+        except Exception as e:
+            print(f"DEBUG: Exception in get_object_or_404: {e}")
+            raise e
 
         self.chat_room = f"private_{min(self.user.username, self.other_user.username)}_{max(self.user.username, self.other_user.username)}"
 
-        async_to_sync(self.channel_layer.group_add)(
-            self.chat_room,
-            self.channel_name
-        )
+        print(f"DEBUG: Adding to group: {self.chat_room}")
+        try:
+            async_to_sync(self.channel_layer.group_add)(
+                self.chat_room,
+                self.channel_name
+            )
+            print("DEBUG: Group add successful")
+        except Exception as e:
+            print(f"DEBUG: Exception in group_add: {e}")
+            raise e
 
         self.accept()
+        print("DEBUG: Connection accepted")
 
     def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)(
-            self.chat_room,
-            self.channel_name
-        )
+        if hasattr(self, 'chat_room'):
+            async_to_sync(self.channel_layer.group_discard)(
+                self.chat_room,
+                self.channel_name
+            )
 
 
     def receive(self, text_data):
@@ -195,9 +215,24 @@ class PrivateChatConsumer(WebsocketConsumer):
                 message = PrivateMessage.objects.create(
                     chat=private_chat,
                     sender=self.user,
-                    body=body
+                    body=encrypt_message(body)
                 )
                 event['timestamp'] = message.created.strftime('%Y-%m-%d %H:%M:%S')
+
+                # Send direct websocket event for new message (without creating a Notification object)
+                from channels.layers import get_channel_layer
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"notifications_{self.other_user.username}",
+                    {
+                        "type": "send_notification",
+                        "notification": {
+                            "notification_type": "new_message",
+                            "sender_username": self.user.username,
+                            "message": f'{self.user.username} sent you a message'
+                        }
+                    }
+                )
 
             # Send the event in real time
             async_to_sync(self.channel_layer.group_send)(

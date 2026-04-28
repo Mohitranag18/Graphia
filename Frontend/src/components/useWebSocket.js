@@ -6,10 +6,11 @@ const useWebSocket = (chatroomName, isPrivateChat = false) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Dynamically set WebSocket URL
+    // Dynamically set WebSocket URL based on environment
+    const wsBase = import.meta.env.VITE_WS_BASE_URL || 'ws://127.0.0.1:8000';
     const wsUrl = isPrivateChat
-      ? `wss://http://127.0.0.1:8000/ws/private/${chatroomName}/`
-      : `wss://http://127.0.0.1:8000/ws/chatroom/${chatroomName}/`;
+      ? `${wsBase}/ws/private/${chatroomName}/`
+      : `${wsBase}/ws/chatroom/${chatroomName}/`;
 
     const ws = new WebSocket(wsUrl);
 

@@ -4,16 +4,25 @@ import Post from "./post";
 import { useToast } from "../context/ToastContext";
 import Loader from "./Loader";
 
+let cachedUserPosts = {};
+
 function UserPosts({username}) {
-    const [posts, setPosts] = useState([])
-    const [loading, setLoading] = useState(true)
+    const cachedPosts = cachedUserPosts[username];
+    const [posts, setPosts] = useState(cachedPosts || [])
+    const [loading, setLoading] = useState(!cachedPosts)
     const { showToast } = useToast()
 
     useEffect(()=>{
         const fetchPosts = async () => {
+            if (!cachedUserPosts[username]) {
+                setLoading(true)
+            }
             try{
-                const posts = await get_users_posts(username)
-                setPosts(posts)
+                const fetchedPosts = await get_users_posts(username)
+                if (JSON.stringify(cachedUserPosts[username]) !== JSON.stringify(fetchedPosts)) {
+                    setPosts(fetchedPosts)
+                    cachedUserPosts[username] = fetchedPosts;
+                }
             }catch{
                 showToast('Failed to load posts.', 'error')
             } finally{
@@ -21,7 +30,7 @@ function UserPosts({username}) {
             }
         }
         fetchPosts()
-    }, [])
+    }, [username])
 
     return ( 
         <>

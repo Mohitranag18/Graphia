@@ -13,4 +13,6 @@ urlpatterns = [
     path('api/recent_private_chats/', get_recent_private_chats, name='get_recent_private_chats'),
     path('api/group/<str:slug>/messages/', create_files_message, name='group-message-create'),
     path('api/group/<str:group_name>/private_messages/', create_private_files_message, name='private-message-create'),
+    path('api/chat/unread-count/', get_unread_messages_count, name='get_unread_messages_count'),
+    path('api/chat/mark-read/<str:group_name>/', mark_chat_read, name='mark_chat_read'),
 ]

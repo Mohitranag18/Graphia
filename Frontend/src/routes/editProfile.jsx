@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/useAuth";
+
 import { update_user } from "../api/endpoints";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
@@ -8,7 +8,7 @@ function EditProfile() {
     const nav = useNavigate();
     const { showToast } = useToast();
 
-    const { user, logoutUser } = useAuth();
+
     const storage = JSON.parse(localStorage.getItem('userData'))
 
     const [username, setUsername] = useState(storage ? storage.username : '')
@@ -29,9 +29,7 @@ function EditProfile() {
         }
     }
 
-    const handleLogout = async () => {
-        await logoutUser();
-      };
+
 
     return ( 
         <>
@@ -65,12 +63,7 @@ function EditProfile() {
                     </div>
                     <button onClick={handleUpdate} className="bg-blue-600 rounded-sm p-2">Save Changes</button>
                 </div>
-                <button
-                    onClick={handleLogout}
-                    className="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700 transition duration-200"
-                >
-                    Logout
-                </button>
+
             </div>
         </div>
         </>

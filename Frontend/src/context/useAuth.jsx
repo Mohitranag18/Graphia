@@ -47,16 +47,16 @@ export const AuthProvider = ({ children }) => {
     nav('/login');
   };
 
-  const registerUser = async (username, email, password, confirm_password) => {
+  const registerUser = async (username, email, password, confirm_password, otp) => {
     try {
       if (password === confirm_password) {
-        const response = await register(username, email, password);
+        const response = await register(username, email, password, otp);
         if (response.username) {
           showToast('Account created successfully! Please log in.', 'success');
           nav('/login');
         } else {
           // Backend returned validation errors
-          const errorMsg = response.username?.[0] || response.email?.[0] || response.password?.[0] || 'Registration failed. Please check your details.';
+          const errorMsg = response.username?.[0] || response.email?.[0] || response.password?.[0] || response.error || 'Registration failed. Please check your details.';
           showToast(errorMsg, 'error');
         }
       } else {
@@ -66,6 +66,7 @@ export const AuthProvider = ({ children }) => {
       const message = error.response?.data?.username?.[0]
         || error.response?.data?.email?.[0]
         || error.response?.data?.password?.[0]
+        || error.response?.data?.error
         || error.response?.data?.detail
         || 'Error registering user. Please try again.';
       showToast(message, 'error');

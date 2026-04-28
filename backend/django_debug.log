@@ -1,0 +1,132 @@
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 18:56:17
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
+WebSocket HANDSHAKING /ws/private/gaurav/ [127.0.0.1:57860]
+Received token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vaGl0R2VodSJ9.YA17KMys6fThLCCdU6BT7jIFWot40uwyi_aAyn4Hpr8
+Decoded JWT: {'username': 'mohitGehu'}
+DEBUG: Authenticated user: mohitGehu, other: gaurav
+DEBUG: Found other_user: gaurav
+DEBUG: Adding to group: private_gaurav_mohitGehu
+DEBUG: Group add successful
+WebSocket CONNECT /ws/private/gaurav/ [127.0.0.1:57860]
+DEBUG: Connection accepted
+WebSocket DISCONNECT /ws/private/gaurav/ [127.0.0.1:57860]
+/home/mohitrana/Desktop/Graphia/backend/chat/consumers.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 18:57:28
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
+/home/mohitrana/Desktop/Graphia/backend/backend/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 18:57:38
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
+/home/mohitrana/Desktop/Graphia/backend/chat/models.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 19:06:02
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
+/home/mohitrana/Desktop/Graphia/backend/chat/consumers.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 19:06:55
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
+/home/mohitrana/Desktop/Graphia/backend/chat/serializers.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 19:07:16
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
+/home/mohitrana/Desktop/Graphia/backend/chat/urls.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/daphne/management/commands/runserver.py", line 96, in inner_run
+    self.check(display_num_errors=True)
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/core/management/base.py", line 486, in check
+    all_issues = checks.run_checks(
+                 ^^^^^^^^^^^^^^^^^^
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 136, in check_custom_error_handlers
+    handler = resolver.resolve_error_handler(status_code)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 732, in resolve_error_handler
+    callback = getattr(self.urlconf_module, "handler%s" % view_type, None)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 711, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/mohitrana/Desktop/Graphia/backend/backend/urls.py", line 22, in <module>
+    path('', include('chat.urls')),
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/mohitrana/Desktop/Graphia/backend/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/mohitrana/Desktop/Graphia/backend/chat/urls.py", line 16, in <module>
+    path('api/chat/unread-count/', get_unread_messages_count, name='get_unread_messages_count'),
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'get_unread_messages_count' is not defined
+/home/mohitrana/Desktop/Graphia/backend/chat/views.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 19:08:00
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.

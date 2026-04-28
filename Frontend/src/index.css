@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+body {
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+}
+
 .hide-scrollbar {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer */

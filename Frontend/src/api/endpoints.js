@@ -73,8 +73,13 @@ export const logout = async () => {
     return response.data;
 };
 
-export const register = async (username, email, password) => {
-    const response = await axios.post(REGISTER_URL, { username, email, password }, { withCredentials: true });
+export const register = async (username, email, password, otp) => {
+    const response = await axios.post(REGISTER_URL, { username, email, password, otp }, { withCredentials: true });
+    return response.data;
+};
+
+export const send_otp = async (email) => {
+    const response = await axios.post(`${BASE_URL}send_otp/`, { email }, { withCredentials: true });
     return response.data;
 };
 
@@ -271,5 +276,68 @@ export const create_comment = async (content, id) => {
         return response.data;
     } catch (error) {
         return call_refresh(error, () => api.post(`create_comment/${id}`, { content }, { withCredentials: true }));
+    }
+};
+
+export const get_followers = async (username) => {
+    try {
+        const response = await api.get(`followers/${username}/`);
+        return response.data;
+    } catch (error) {
+        return call_refresh(error, () => api.get(`followers/${username}/`));
+    }
+};
+
+export const get_following = async (username) => {
+    try {
+        const response = await api.get(`following/${username}/`);
+        return response.data;
+    } catch (error) {
+        return call_refresh(error, () => api.get(`following/${username}/`));
+    }
+};
+
+export const get_notifications = async () => {
+    try {
+        const response = await api.get('notifications/');
+        return response.data;
+    } catch (error) {
+        return call_refresh(error, () => api.get('notifications/'));
+    }
+};
+
+export const mark_notifications_read = async (ids = null) => {
+    try {
+        const response = await api.post('notifications/read/', { ids }, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        return call_refresh(error, () => api.post('notifications/read/', { ids }, { withCredentials: true }));
+    }
+};
+
+export const get_unread_count = async () => {
+    try {
+        const response = await api.get('notifications/unread_count/');
+        return response.data;
+    } catch (error) {
+        return call_refresh(error, () => api.get('notifications/unread_count/'));
+    }
+};
+
+export const get_unread_messages_count = async () => {
+    try {
+        const response = await api.get('chat/unread-count/');
+        return response.data;
+    } catch (error) {
+        return call_refresh(error, () => api.get('chat/unread-count/'));
+    }
+};
+
+export const mark_chat_read = async (group_name) => {
+    try {
+        const response = await api.post(`chat/mark-read/${group_name}/`, {}, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        return call_refresh(error, () => api.post(`chat/mark-read/${group_name}/`, {}, { withCredentials: true }));
     }
 };

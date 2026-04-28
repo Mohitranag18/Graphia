@@ -1,9 +1,10 @@
 import useWebSocket from './useWebSocket';  // Import the WebSocket module
 import { useEffect, useState, useRef } from "react";
-import { get_private_messages, create_private_files_message } from "../api/endpoints";
+import { get_private_messages, create_private_files_message, mark_chat_read } from "../api/endpoints";
 import {SERVER_URL} from '../api/endpoints'
 import { useNavigate } from "react-router-dom";
 import { FaRegImage } from 'react-icons/fa6';
+import { useNotifications } from '../context/NotificationContext';
 
 
 const ChatRoomPrivate = () => {
@@ -32,10 +33,18 @@ const ChatRoomPrivate = () => {
     const [username, setUsername] = useState(storage ? storage.username : '')
 
     const group_name = [username, otherUser].sort().join('_');
+    const { fetchUnreadMessageCount } = useNotifications();
 
     useEffect(() => {
       const fetchMessages = async () => {
         try {
+          // Mark chat as read
+          await mark_chat_read(group_name);
+          // Refresh global unread count
+          if (fetchUnreadMessageCount) {
+             fetchUnreadMessageCount();
+          }
+
           const response = await get_private_messages(group_name);
           if (Array.isArray(response)) {
             setOldMessages(response);
@@ -49,7 +58,7 @@ const ChatRoomPrivate = () => {
         }
       };
       fetchMessages();
-    }, [group_name]);
+    }, [group_name, fetchUnreadMessageCount]);
     
 
     // Scroll to the bottom of the messages container

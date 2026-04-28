@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Note
-from .models import MyUser, Post, Comment
+from .models import MyUser, Post, Comment, Notification
 
 
 class MyUserProfileSerializer(serializers.ModelSerializer):
@@ -76,3 +76,20 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ['username', 'bio', 'email', 'profile_image', 'first_name', 'last_name']
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    sender_profile_image = serializers.URLField(source='sender.profile_image', read_only=True)
+    formatted_date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = [
+            'id', 'sender_username', 'sender_profile_image',
+            'notification_type', 'post', 'message',
+            'is_read', 'created_at', 'formatted_date'
+        ]
+
+    def get_formatted_date(self, obj):
+        return obj.created_at.strftime("%d %b %y")

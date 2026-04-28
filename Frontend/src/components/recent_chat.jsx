@@ -48,7 +48,7 @@ function RecentChat() {
             <div className='flex flex-col gap-4 border-2 border-gray-300 rounded-2xl p-6 h-96 overflow-hidden overflow-y-auto custom-scrollbar'>
                 {
                     recentChats.map((chat)=>{
-                        return <RecentChatUserCard username={chat.users.username} group_name={chat.group_name}/>
+                        return <RecentChatUserCard key={chat.id} username={chat.users.username} group_name={chat.group_name} unread_count={chat.unread_count}/>
                     })
                 }
             </div>

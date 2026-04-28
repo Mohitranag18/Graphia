@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from rest_framework import status
 from .models import MyUser
-from .models import Note, Post, Comment
-from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer, UserSerializer, CommentSerializer
+from .models import Note, Post, Comment, Notification
+from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, PostSerializer, UserSerializer, CommentSerializer, NotificationSerializer
+from .utils.notifications import create_notification
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
@@ -10,6 +11,9 @@ from .models import Post
 from .utils.supabase_client import supabase
 import uuid
 from uuid import uuid4
+import random
+from django.conf import settings
+from .models import OTP
 
 # Import the custom user model
 MyUser = get_user_model()
@@ -126,11 +130,52 @@ def is_authenticated(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+    email = request.data.get('email')
+    otp = request.data.get('otp')
+
+    if not email or not otp:
+        return Response({"error": "Email and OTP are required"}, status=400)
+
+    try:
+        otp_record = OTP.objects.get(email=email, otp=otp)
+    except OTP.DoesNotExist:
+        return Response({"error": "Invalid OTP"}, status=400)
+
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
+        otp_record.delete()
         return Response(serializer.data)
-    return Response(serializer.errors)
+    return Response(serializer.errors, status=400)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def send_otp(request):
+    email = request.data.get("email")
+    if not email:
+        return Response({"error": "Email is required"}, status=400)
+    
+    if not email.endswith('@gehu.ac.in'):
+        return Response({"error": "Only @gehu.ac.in student emails are allowed"}, status=400)
+
+    if MyUser.objects.filter(email=email).exists():
+        return Response({"error": "User with this email already exists"}, status=400)
+
+    otp = str(random.randint(100000, 999999))
+    
+    otp_record, created = OTP.objects.get_or_create(email=email)
+    otp_record.otp = otp
+    otp_record.save()
+
+    send_mail(
+        "Your Signup OTP",
+        f"Your OTP for registration on Graphia is {otp}",
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+
+    return Response({"success": True, "message": "OTP sent successfully"}, status=200)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -247,6 +292,12 @@ def toggleFollow(request):
             return Response({'now_following':False})
         else:
             user_to_follow.follower.add(my_user)
+            create_notification(
+                sender=my_user,
+                recipient=user_to_follow,
+                notification_type='follow',
+                message=f'{my_user.username} started following you'
+            )
             return Response({'now_following':True})
     except:
         return Response({'error':'error in following user'})
@@ -296,6 +347,13 @@ def toggleLike(request):
             return Response({'now_liked':False})
         else:
             post.likes.add(user)
+            create_notification(
+                sender=user,
+                recipient=post.user,
+                notification_type='like',
+                message=f'{user.username} liked your post',
+                post=post
+            )
             return Response({'now_liked':True})
     except:
         return Response({"error":"faild to like post"})
@@ -457,6 +515,17 @@ def create_comment(request, post_id):
     serializer = CommentSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
+        try:
+            post = Post.objects.get(id=post_id)
+            create_notification(
+                sender=request.user,
+                recipient=post.user,
+                notification_type='comment',
+                message=f'{request.user.username} commented on your post',
+                post=post
+            )
+        except Post.DoesNotExist:
+            pass
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
@@ -469,3 +538,65 @@ def delete_comment(request, comment_id):
         return Response({'message': 'Comment deleted successfully'}, status=204)
     except Comment.DoesNotExist:
         return Response({'error': 'Comment not found or not authorized'}, status=404)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_followers_list(request, username):
+    """Get list of users who follow the given user."""
+    try:
+        user = MyUser.objects.get(username=username)
+    except MyUser.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    followers = user.follower.all()
+    serializer = UserSerializer(followers, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_following_list(request, username):
+    """Get list of users the given user is following."""
+    try:
+        user = MyUser.objects.get(username=username)
+    except MyUser.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    following = user.following.all()
+    serializer = UserSerializer(following, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_notifications(request):
+    """Get the current user's notifications (last 50)."""
+    notifications = Notification.objects.filter(recipient=request.user)[:50]
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def mark_notifications_read(request):
+    """Mark all or specific notifications as read."""
+    notification_ids = request.data.get('ids', None)
+    if notification_ids:
+        Notification.objects.filter(
+            id__in=notification_ids, recipient=request.user
+        ).update(is_read=True)
+    else:
+        Notification.objects.filter(
+            recipient=request.user, is_read=False
+        ).update(is_read=True)
+    return Response({'success': True})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_unread_count(request):
+    """Get the count of unread notifications."""
+    count = Notification.objects.filter(
+        recipient=request.user, is_read=False
+    ).count()
+    return Response({'unread_count': count})

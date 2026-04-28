@@ -13,12 +13,12 @@ function GroupCard({id, group_name, slug, description}) {
 
     return (
         <>
-        <div className=" flex justify-between rounded-md bg-gray-100 w-full h-20 border-2 border-gray-200">
-            <div className="flex flex-col justify-center overflow-hidden p-2 px-4">
-                <h3 className="font-semibold text-lg">{group_name}</h3>
-                <p className="text-gray-800">{description}</p>
+        <div className="flex justify-between rounded-2xl bg-white w-full h-24 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] group">
+            <div className="flex flex-col justify-center overflow-hidden p-3 px-5 w-full">
+                <h3 className="font-bold text-lg text-slate-800 tracking-tight">{group_name}</h3>
+                <p className="text-slate-500 text-sm truncate">{description}</p>
             </div>
-            <div onClick={(route) => handleNavigate(`/chatroom/${slug}/info`)} className="w-14 bg-blue-200 p-2 text-2xl font-semibold rounded-sm flex items-center justify-center cursor-pointer hover:bg-gray-200"><PiChatTeardropDotsLight /></div>
+            <div onClick={() => handleNavigate(`/chatroom/${slug}/info`)} className="w-16 bg-indigo-50 text-indigo-600 p-2 text-2xl font-semibold flex items-center justify-center cursor-pointer transition-colors duration-300 group-hover:bg-indigo-600 group-hover:text-white"><PiChatTeardropDotsLight className="transition-transform group-hover:scale-110" /></div>
         </div>
         </>
      );

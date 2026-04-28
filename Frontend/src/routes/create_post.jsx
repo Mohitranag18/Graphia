@@ -35,30 +35,36 @@ function CreatePost() {
     };
 
     return (
-        <div className="h-screen flex justify-center items-center px-4">
-            <div className="w-full max-w-lg flex flex-col gap-4">
-                <h2 className="text-2xl font-bold">Create Post</h2>
+        <div className="h-screen flex justify-center items-start pt-20 px-4 bg-slate-50">
+            <div className="w-full max-w-lg flex flex-col gap-6 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                <div className="text-center mb-2">
+                    <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">Create Post</h2>
+                    <p className="text-sm text-slate-500 mt-2">Share something new with your friends</p>
+                </div>
                 <div className="flex flex-col gap-2 w-full">
-                    <label className="text-lg font-semibold">Post Image</label>
+                    <label className="text-sm font-semibold text-slate-600 ml-1">Post Image</label>
                     <input
                         ref={fileInputRef}
                         onChange={(e) => setPostImage(e.target.files[0])}
                         accept="image/*"
                         type="file"
-                        className="bg-gray-200 rounded-sm p-2"
+                        className="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer border border-slate-200 rounded-xl p-2 bg-slate-50 transition-colors"
                     />
                 </div>
-                <div className="flex flex-col gap-4 w-full">
-                    <label className="text-xl font-semibold">Caption</label>
-                    <input
-                        onChange={(e) => setDescription(e.target.value)}
-                        value={description}
-                        type="text"
-                        className="bg-gray-100 rounded-sm p-2 w-full border border-gray-300"
-                    />
+                <div className="flex flex-col gap-6 w-full">
+                    <div className="flex flex-col gap-2 w-full">
+                        <label className="text-sm font-semibold text-slate-600 ml-1">Caption</label>
+                        <input
+                            onChange={(e) => setDescription(e.target.value)}
+                            value={description}
+                            type="text"
+                            placeholder="What's on your mind?"
+                            className="bg-slate-50 rounded-xl p-4 w-full border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all duration-300"
+                        />
+                    </div>
                     <button
                         onClick={handlePost}
-                        className="bg-blue-500 text-lg text-white cursor-pointer rounded-sm p-2 w-full"
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold cursor-pointer rounded-xl py-3.5 w-full hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all duration-300"
                     >
                         Post
                     </button>

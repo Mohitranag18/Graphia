@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { ToastProvider } from './context/ToastContext.jsx';
 import { AuthProvider } from './context/useAuth.jsx';
+import { NotificationProvider } from './context/NotificationContext.jsx';
 import Header from './components/header.jsx';
 import Footer from './components/footer.jsx'
 import Login from './routes/login';
@@ -27,6 +28,7 @@ function App() {
     <Router>
       <ToastProvider>
       <AuthProvider>
+        <NotificationProvider>
         <Header />
         <Routes>
         <Route element={
@@ -104,6 +106,7 @@ function App() {
           <Route element={<ForgotPassword />} path="/forgotPassword" />
           <Route element={<ResetPassword />} path="/resetPassword/:username/:token" />
         </Routes>
+        </NotificationProvider>
       </AuthProvider>
       </ToastProvider>
     </Router>

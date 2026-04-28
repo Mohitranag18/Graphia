@@ -45,10 +45,17 @@ class UserSerializer(serializers.ModelSerializer):
 class PrivateChatSerializer(serializers.ModelSerializer):
     last_message_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     users = serializers.SerializerMethodField()
+    unread_count = serializers.SerializerMethodField()
 
     class Meta:
         model = PrivateChat
-        fields = ['id', 'group_name', 'last_message_at', 'users']
+        fields = ['id', 'group_name', 'last_message_at', 'users', 'unread_count']
+
+    def get_unread_count(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return 0
+        return obj.private_messages.filter(is_read=False).exclude(sender=request.user).count()
 
     def get_users(self, obj):
         request = self.context.get('request')

@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ['http://127.0.0.1:8000', 'localhost', '127.0.0.1', 'https://graphia-8q65.vercel.app'] 
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'graphia-8q65.vercel.app', '*']
 
 AUTH_USER_MODEL = 'base.MyUser'
 
@@ -99,8 +99,8 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [{
                 "address": config('REDIS_URL'),
-                "ssl": True
-            }],
+                "ssl_cert_reqs": None,
+            }] if config('REDIS_URL', default='').startswith('rediss://') else [config('REDIS_URL')],
         },
     },
 }
@@ -210,3 +210,6 @@ EMAIL_PORT = config('EMAIL_PORT', cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+# Message encryption key (Fernet)
+ENCRYPTION_KEY = config('ENCRYPTION_KEY')

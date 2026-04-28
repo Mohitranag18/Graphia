@@ -20,8 +20,9 @@ class ChatGroup(models.Model):
 class GroupMessage(models.Model):
     group = models.ForeignKey(ChatGroup, related_name='chat_messages', on_delete=models.CASCADE)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    body = models.CharField(max_length=300, blank=True, null=True)
+    body = models.TextField(blank=True, null=True)
     file = models.URLField(blank=True, null=True)
+    is_encrypted = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -55,6 +56,8 @@ class PrivateMessage(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     body = models.TextField(blank=True, null=True)
     file = models.URLField(blank=True, null=True)
+    is_encrypted = models.BooleanField(default=True)
+    is_read = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

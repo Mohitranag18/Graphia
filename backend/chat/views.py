@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.db import models
 from uuid import uuid4
 from .utils.supabase_client import supabase
+from .utils.encryption import encrypt_message, decrypt_message
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -23,8 +24,14 @@ def fetch_messages(request, slug):
         
         # Serialize the messages
         serializer = GroupMessageSerializer(messages, many=True)
-        
-        return Response(serializer.data)
+
+        # Decrypt message bodies
+        data = serializer.data
+        for msg in data:
+            if msg.get('body'):
+                msg['body'] = decrypt_message(msg['body'])
+
+        return Response(data)
     
     except ChatGroup.DoesNotExist:
         return Response({'error': 'Chat group not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -37,7 +44,7 @@ def fetch_private_messages(request, group_name):
         print(f"Fetching messages for group: {group_name}")
 
         # Fetch the private chat group
-        private_chat = get_object_or_404(PrivateChat, group_name=group_name)
+        private_chat = PrivateChat.objects.get(group_name=group_name)
         
         # Debugging: Check if the private_chat object is fetched
         print(f"Private chat: {private_chat}")
@@ -50,11 +57,17 @@ def fetch_private_messages(request, group_name):
 
         # Serialize the messages
         serializer = PrivateMessageSerializer(messages, many=True)
-        
-        return Response(serializer.data)
+
+        # Decrypt message bodies
+        data = serializer.data
+        for msg in data:
+            if msg.get('body'):
+                msg['body'] = decrypt_message(msg['body'])
+
+        return Response(data)
     
     except PrivateChat.DoesNotExist:
-        return Response({'error': 'Private chat not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response([])
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -168,8 +181,11 @@ def create_files_message(request, slug):
         file_url = supabase.storage.from_('group-files').get_public_url(upload_response.path)
         data['file'] = file_url
 
-    # Validate and save message
-    serializer = GroupMessageSerializer(data=data)
+    # Validate and save message (encrypt body before saving)
+    data_to_save = data.copy()
+    if data_to_save.get('body'):
+        data_to_save['body'] = encrypt_message(data_to_save['body'])
+    serializer = GroupMessageSerializer(data=data_to_save)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -210,9 +226,38 @@ def create_private_files_message(request, group_name):
         file_url = supabase.storage.from_('private-files').get_public_url(upload_response.path)
         data['file'] = file_url
 
+    # Encrypt body before saving
+    if data.get('body'):
+        data['body'] = encrypt_message(data['body'])
+
     serializer = PrivateMessageSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_unread_messages_count(request):
+    """Get the total count of unread private messages for the logged-in user."""
+    count = PrivateMessage.objects.filter(
+        models.Q(chat__user1=request.user) | models.Q(chat__user2=request.user),
+        is_read=False
+    ).exclude(sender=request.user).count()
+    return Response({'unread_count': count})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def mark_chat_read(request, group_name):
+    """Mark all messages in a specific private chat as read for the logged-in user."""
+    try:
+        chat = PrivateChat.objects.get(group_name=group_name)
+        if request.user not in [chat.user1, chat.user2]:
+            return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Update messages where sender is NOT the current user
+        PrivateMessage.objects.filter(chat=chat, is_read=False).exclude(sender=request.user).update(is_read=True)
+        return Response({'success': True})
+    except PrivateChat.DoesNotExist:
+        return Response({'error': 'Chat not found'}, status=status.HTTP_404_NOT_FOUND)
