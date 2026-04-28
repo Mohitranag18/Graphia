@@ -130,3 +130,12 @@ April 28, 2026 - 19:08:00
 Django version 5.1.5, using settings 'backend.settings'
 Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
 Quit the server with CONTROL-C.
+/home/mohitrana/Desktop/Graphia/backend/backend/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 28, 2026 - 20:19:47
+Django version 5.1.5, using settings 'backend.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:8001/
+Quit the server with CONTROL-C.
